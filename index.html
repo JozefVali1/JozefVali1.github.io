@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Budowniczy">
+<meta name="theme-color" content="#0F6E56">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Budowniczy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;padding-bottom:90px}
+.header{background:#fff;padding:14px 16px;border-bottom:1px solid #e5e5e0;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50}
+.header-icon{width:36px;height:36px;background:#E1F5EE;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.header h1{font-size:18px;font-weight:700;color:#1a1a1a}
+.header p{font-size:11px;color:#888}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#ccc;margin-left:auto;flex-shrink:0;transition:background .3s}
+.sync-dot.ok{background:#0F6E56}
+.sync-dot.err{background:#e53}
+.tabs{display:flex;background:#fff;border-bottom:1px solid #e5e5e0;position:sticky;top:65px;z-index:49;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:64px;padding:9px 4px 7px;text-align:center;font-size:10px;color:#999;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:600;white-space:nowrap}
+.tab .ico{font-size:20px}
+.tab.active{color:#0F6E56;border-bottom-color:#0F6E56}
+.section{padding:16px;display:none}
+.section.active{display:block}
+
+/* Cards */
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #e5e5e0}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.card-title{font-size:15px;font-weight:600;color:#1a1a1a}
+.card-sub{font-size:12px;color:#888;margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.card-price{font-size:17px;font-weight:700;color:#0F6E56;margin:8px 0 6px}
+.card-details{display:flex;gap:10px;font-size:12px;color:#888;flex-wrap:wrap}
+.btn-del{background:none;border:none;cursor:pointer;color:#ddd;font-size:18px;padding:4px;border-radius:8px;line-height:1;flex-shrink:0}
+.btn-del:active{background:#FCEBEB;color:#A32D2D}
+
+/* Badges */
+.badge{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:600;white-space:nowrap}
+.badge-planned{background:#E6F1FB;color:#185FA5}
+.badge-bought{background:#EAF3DE;color:#3B6D11}
+.badge-partial{background:#FAEEDA;color:#854F0B}
+.badge-active{background:#FFF3CD;color:#856404}
+.badge-done{background:#EAF3DE;color:#3B6D11}
+.badge-rented{background:#F3E8FF;color:#6B21A8}
+.badge-returned{background:#E5E7EB;color:#6B7280}
+.badge-to-rent{background:#FEF9C3;color:#854F0B}
+.badge-to-buy{background:#E6F1FB;color:#185FA5}
+
+/* Summary */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.metric{background:#fff;border-radius:12px;padding:13px 14px;border:1px solid #e5e5e0}
+.metric-label{font-size:11px;color:#888;margin-bottom:4px;font-weight:600}
+.metric-value{font-size:18px;font-weight:700;color:#1a1a1a}
+.metric-value.green{color:#0F6E56}
+.metric-value.amber{color:#BA7517}
+.metric-value.red{color:#A32D2D}
+.section-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;margin-top:4px}
+.total-bar{height:10px;background:#f0f0eb;border-radius:5px;overflow:hidden;margin:8px 0 5px}
+.total-fill{height:100%;border-radius:5px;transition:width .4s}
+.cat-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid #f0f0eb}
+.cat-row:last-child{border-bottom:none}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cat-name{flex:1;font-size:14px;font-weight:500}
+.cat-amt{font-size:14px;font-weight:600}
+.cat-pct{font-size:11px;color:#888;min-width:32px;text-align:right}
+.progress-bar{height:5px;background:#f0f0eb;border-radius:3px;margin-top:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px}
+
+/* Filters */
+.filter-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.chip{padding:6px 14px;border-radius:20px;font-size:12px;border:1px solid #ddd;background:#fff;color:#888;cursor:pointer;white-space:nowrap;font-weight:600}
+.chip.active{background:#0F6E56;color:#fff;border-color:#0F6E56}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:28px;background:#0F6E56;color:#fff;border:none;cursor:pointer;font-size:28px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(15,110,86,.4);z-index:100}
+.fab:active{transform:scale(.94)}
+.fab.show{display:flex}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:22px 22px 0 0;padding:6px 16px 40px;width:100%;max-height:92vh;overflow-y:auto}
+.drag-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:10px auto 16px;display:block}
+.modal h2{font-size:17px;font-weight:700;margin-bottom:16px;color:#1a1a1a}
+.form-row{margin-bottom:12px}
+.form-row label{display:block;font-size:12px;color:#888;margin-bottom:4px;font-weight:600}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:11px 13px;border:1.5px solid #e5e5e0;border-radius:10px;font-size:15px;background:#fff;color:#1a1a1a;-webkit-appearance:none;font-family:inherit}
+.form-row textarea{resize:none;height:72px}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{outline:none;border-color:#0F6E56}
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-row{display:flex;gap:9px;margin-top:18px}
+.btn-primary{flex:1;background:#0F6E56;color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-primary:active{opacity:.85}
+.btn-cancel{flex:0 0 auto;background:#f5f5f0;border:none;color:#888;padding:14px 16px;border-radius:12px;font-size:15px;cursor:pointer;font-weight:500}
+
+/* Calc */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.calc-btn{padding:12px 8px;border-radius:12px;border:1.5px solid #e5e5e0;background:#fff;color:#888;font-size:12px;cursor:pointer;text-align:center;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px}
+.calc-btn .ico{font-size:22px}
+.calc-btn.active{border-color:#0F6E56;background:#E1F5EE;color:#0F6E56}
+.calc-section{display:none}
+.calc-section.active{display:block}
+.calc-result{background:#E1F5EE;border-radius:12px;padding:14px;margin-top:12px;font-size:14px;color:#085041;line-height:1.9}
+.calc-result strong{font-size:19px;display:block;margin-bottom:6px;color:#0F6E56;font-weight:700}
+.calc-result .note{font-size:11px;color:#5DCAA5;margin-top:4px;display:block}
+
+/* Budget */
+.budget-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #e5e5e0}
+.stage-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #f0f0eb}
+.stage-row:last-child{border-bottom:none}
+.btn-add-stage{width:100%;margin-top:12px;background:#f5f5f0;border:1.5px dashed #ddd;color:#888;padding:12px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:500}
+
+/* Equipment rental timer */
+.rental-timer{font-size:12px;color:#6B21A8;font-weight:600;margin-top:4px}
+.btn-return{font-size:12px;padding:5px 12px;border-radius:8px;background:#F3E8FF;color:#6B21A8;border:none;cursor:pointer;font-weight:600;margin-top:6px}
+.btn-return:active{background:#E9D5FF}
+
+/* Empty state */
+.empty{text-align:center;padding:48px 20px;color:#bbb}
+.empty .ico{font-size:48px;display:block;margin-bottom:10px}
+
+/* Loading */
+.loading{text-align:center;padding:40px;color:#bbb;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🏗️</div>
+  <div>
+    <h1>Budowniczy</h1>
+    <p>Planer budżetu budowy</p>
+  </div>
+  <div class="sync-dot" id="sync-dot" title="Status synchronizacji"></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('dashboard')"><span class="ico">📊</span>Przegląd</div>
+  <div class="tab" onclick="switchTab('materials')"><span class="ico">🧱</span>Materiały</div>
+  <div class="tab" onclick="switchTab('contractors')"><span class="ico">👷</span>Usługi</div>
+  <div class="tab" onclick="switchTab('equipment')"><span class="ico">🔧</span>Sprzęt</div>
+  <div class="tab" onclick="switchTab('calc')"><span class="ico">🔢</span>Kalkulator</div>
+  <div class="tab" onclick="switchTab('budget')"><span class="ico">💰</span>Budżet</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="section active">
+  <div class="summary-grid">
+    <div class="metric"><div class="metric-label">Całkowity kosztorys</div><div class="metric-value" id="d-total">—</div></div>
+    <div class="metric"><div class="metric-label">Budżet</div><div class="metric-value green" id="d-budget">—</div></div>
+    <div class="metric"><div class="metric-label">Wydano / zobowiązano</div><div class="metric-value amber" id="d-spent">—</div></div>
+    <div class="metric"><div class="metric-label">Pozostało</div><div class="metric-value" id="d-left">—</div></div>
+  </div>
+  <div class="total-bar"><div class="total-fill" id="d-bar" style="background:#0F6E56;width:0%"></div></div>
+  <p id="d-status" style="font-size:12px;color:#888;margin-bottom:18px">Ładowanie…</p>
+  <div class="section-title">Materiały wg kategorii</div>
+  <div id="d-cats"></div>
+  <div class="section-title" style="margin-top:16px">Usługi — podsumowanie</div>
+  <div id="d-contractors"></div>
+</div>
+
+<!-- MATERIAŁY -->
+<div id="tab-materials" class="section">
+  <div class="filter-row">
+    <button class="chip active" onclick="filterMat('all',this)">Wszystkie</button>
+    <button class="chip" onclick="filterMat('planned',this)">Planowane</button>
+    <button class="chip" onclick="filterMat('partial',this)">Częściowo</button>
+    <button class="chip" onclick="filterMat('bought',this)">Kupione</button>
+  </div>
+  <div id="mat-list"><div class="loading">Ładowanie…</div></div>
+</div>
+
+<!-- USŁUGODAWCY -->
+<div id="tab-contractors" class="section">
+  <div class="filter-row">
+    <button class="chip active" onclick="filterCon('all',this)">Wszystkie</button>
+    <button class="chip" onclick="filterCon('planned',this)">Zaplanowane</button>
+    <button class="chip" onclick="filterCon('active',this)">W trakcie</button>
+    <button class="chip" onclick="filterCon('done',this)">Zakończone</button>
+  </div>
+  <div id="con-list"><div class="loading">Ładowanie…</div></div>
+</div>
+
+<!-- SPRZĘT -->
+<div id="tab-equipment" class="section">
+  <div class="filter-row">
+    <button class="chip active" onclick="filterEq('all',this)">Wszystkie</button>
+    <button class="chip" onclick="filterEq('to-buy',this)">Do kupienia</button>
+    <button class="chip" onclick="filterEq('bought',this)">Kupione</button>
+    <button class="chip" onclick="filterEq('to-rent',this)">Do wynajęcia</button>
+    <button class="chip" onclick="filterEq('rented',this)">Wynajęte</button>
+    <button class="chip" onclick="filterEq('returned',this)">Zwrócone</button>
+  </div>
+  <div id="eq-list"><div class="loading">Ładowanie…</div></div>
+</div>
+
+<!-- KALKULATOR -->
+<div id="tab-calc" class="section">
+  <div class="section-title">Wybierz typ obliczeń</div>
+  <div class="calc-grid">
+    <button class="calc-btn active" onclick="setCalc('beton',this)"><span class="ico">💧</span>Beton / płyta</button>
+    <button class="calc-btn" onclick="setCalc('cegla',this)"><span class="ico">🧱</span>Cegły / bloczki</button>
+    <button class="calc-btn" onclick="setCalc('tynk',this)"><span class="ico">🖌️</span>Tynk</button>
+    <button class="calc-btn" onclick="setCalc('plytki',this)"><span class="ico">⬛</span>Płytki</button>
+  </div>
+  <div id="calc-beton" class="calc-section active">
+    <div class="form-row"><label>Długość (m)</label><input type="number" inputmode="decimal" id="c-dl" placeholder="np. 10" oninput="calcBeton()"></div>
+    <div class="form-row"><label>Szerokość (m)</label><input type="number" inputmode="decimal" id="c-sz" placeholder="np. 8" oninput="calcBeton()"></div>
+    <div class="form-row"><label>Grubość / głębokość (cm)</label><input type="number" inputmode="decimal" id="c-gr" placeholder="np. 15" oninput="calcBeton()"></div>
+    <div class="form-row"><label>Klasa betonu</label>
+      <select id="c-klasa" onchange="calcBeton()">
+        <option value="350">B20 (~350 kg cementu/m³)</option>
+        <option value="400" selected>B25 (~400 kg cementu/m³)</option>
+        <option value="450">B30 (~450 kg cementu/m³)</option>
+      </select>
+    </div>
+    <div id="res-beton"></div>
+  </div>
+  <div id="calc-cegla" class="calc-section">
+    <div class="form-row"><label>Długość ściany (m)</label><input type="number" inputmode="decimal" id="cg-dl" placeholder="np. 5" oninput="calcCegla()"></div>
+    <div class="form-row"><label>Wysokość ściany (m)</label><input type="number" inputmode="decimal" id="cg-h" placeholder="np. 2.5" oninput="calcCegla()"></div>
+    <div class="form-row"><label>Typ materiału</label>
+      <select id="cg-typ" onchange="calcCegla()">
+        <option value="55">Cegła pełna (55 szt/m²)</option>
+        <option value="8">Pustak ceramiczny (8 szt/m²)</option>
+        <option value="12.5">Bloczek gazobeton 24cm (12.5 szt/m²)</option>
+        <option value="9">Bloczek gazobeton 36cm (9 szt/m²)</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Cena za sztukę (zł)</label><input type="number" inputmode="decimal" id="cg-cena" placeholder="np. 1.50" step="0.01" oninput="calcCegla()"></div>
+    <div id="res-cegla"></div>
+  </div>
+  <div id="calc-tynk" class="calc-section">
+    <div class="form-row"><label>Powierzchnia ścian (m²)</label><input type="number" inputmode="decimal" id="t-pow" placeholder="np. 120" oninput="calcTynk()"></div>
+    <div class="form-row"><label>Grubość tynku (mm)</label><input type="number" inputmode="decimal" id="t-gr" placeholder="np. 15" oninput="calcTynk()"></div>
+    <div class="form-row"><label>Cena worka 25 kg (zł)</label><input type="number" inputmode="decimal" id="t-cena" placeholder="np. 25" oninput="calcTynk()"></div>
+    <div id="res-tynk"></div>
+  </div>
+  <div id="calc-plytki" class="calc-section">
+    <div class="form-row"><label>Długość pomieszczenia (m)</label><input type="number" inputmode="decimal" id="p-dl" placeholder="np. 4" oninput="calcPlytki()"></div>
+    <div class="form-row"><label>Szerokość pomieszczenia (m)</label><input type="number" inputmode="decimal" id="p-sz" placeholder="np. 3" oninput="calcPlytki()"></div>
+    <div class="form-row"><label>Rozmiar płytki</label>
+      <select id="p-rozm" onchange="calcPlytki()">
+        <option value="0.09">30×30 cm</option>
+        <option value="0.16">40×40 cm</option>
+        <option value="0.25" selected>50×50 cm</option>
+        <option value="0.36">60×60 cm</option>
+        <option value="0.156">60×26 cm</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Cena za m² (zł)</label><input type="number" inputmode="decimal" id="p-cena" placeholder="np. 80" oninput="calcPlytki()"></div>
+    <div id="res-plytki"></div>
+  </div>
+</div>
+
+<!-- BUDŻET -->
+<div id="tab-budget" class="section">
+  <div class="budget-card">
+    <div class="section-title">Całkowity budżet inwestycji</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">
+      <span style="font-size:14px;font-weight:500">Planowany budżet</span>
+      <input type="number" inputmode="decimal" id="budget-input" placeholder="np. 500000" oninput="saveBudget()" style="max-width:160px;text-align:right;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;font-size:15px">
+    </div>
+    <p style="font-size:12px;color:#888">Wpisz budżet żeby śledzić postęp wydatków</p>
+  </div>
+  <div class="budget-card">
+    <div class="section-title">Etapy budowy</div>
+    <div id="stages-list"></div>
+    <button class="btn-add-stage" onclick="addStage()">+ Dodaj etap budowy</button>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openModal()" aria-label="Dodaj">+</button>
+
+<!-- MODAL MATERIAŁ -->
+<div class="modal-bg" id="modal-mat" onclick="closeModalBg('modal-mat',event)">
+  <div class="modal">
+    <span class="drag-handle"></span>
+    <h2>🧱 Nowy materiał</h2>
+    <div class="form-row"><label>Nazwa materiału *</label><input type="text" id="fm-name" placeholder="np. Cegła ceramiczna pełna"></div>
+    <div class="form-row"><label>Kategoria</label>
+      <select id="fm-cat">
+        <option>Fundamenty</option><option>Ściany</option><option>Dach</option>
+        <option>Instalacje</option><option>Wykończenie</option><option>Okna i drzwi</option>
+        <option>Elewacja</option><option>Inne</option>
+      </select>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Ilość *</label><input type="number" inputmode="decimal" id="fm-qty" placeholder="np. 5000"></div>
+      <div class="form-row"><label>Jednostka</label>
+        <select id="fm-unit"><option>szt</option><option>m²</option><option>m³</option><option>mb</option><option>kg</option><option>t</option><option>worek</option><option>kpl</option></select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Cena jedn. (zł) *</label><input type="number" inputmode="decimal" id="fm-price" placeholder="np. 1.50" step="0.01"></div>
+      <div class="form-row"><label>Status</label>
+        <select id="fm-status"><option value="planned">Planowane</option><option value="partial">Częściowo</option><option value="bought">Kupione</option></select>
+      </div>
+    </div>
+    <div class="form-row"><label>Dostawca / uwagi</label><input type="text" id="fm-note" placeholder="np. Cegielnia Kowalski"></div>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeModal('modal-mat')">Anuluj</button>
+      <button class="btn-primary" onclick="saveMat()">✓ Dodaj</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL USŁUGODAWCA -->
+<div class="modal-bg" id="modal-con" onclick="closeModalBg('modal-con',event)">
+  <div class="modal">
+    <span class="drag-handle"></span>
+    <h2>👷 Nowy usługodawca</h2>
+    <div class="form-row"><label>Nazwa / firma *</label><input type="text" id="fc-name" placeholder="np. Jan Kowalski — murarz"></div>
+    <div class="form-row"><label>Rodzaj usługi</label>
+      <select id="fc-type">
+        <option>Murarka</option><option>Fundamenty</option><option>Dach / dekarstwo</option>
+        <option>Elektryk</option><option>Hydraulik</option><option>Tynkowanie</option>
+        <option>Wylewka</option><option>Okna / drzwi</option><option>Elewacja</option>
+        <option>Wykończenie</option><option>Ocieplenie</option><option>Inne</option>
+      </select>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Koszt robocizny (zł) *</label><input type="number" inputmode="decimal" id="fc-cost" placeholder="np. 15000"></div>
+      <div class="form-row"><label>Status</label>
+        <select id="fc-status"><option value="planned">Zaplanowane</option><option value="active">W trakcie</option><option value="done">Zakończone</option></select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Termin rozpoczęcia</label><input type="date" id="fc-start"></div>
+      <div class="form-row"><label>Termin zakończenia</label><input type="date" id="fc-end"></div>
+    </div>
+    <div class="form-row"><label>Telefon kontaktowy</label><input type="tel" id="fc-phone" placeholder="np. 600 123 456"></div>
+    <div class="form-row"><label>Uwagi</label><textarea id="fc-note" placeholder="np. Zaliczka 2000 zł zapłacona"></textarea></div>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeModal('modal-con')">Anuluj</button>
+      <button class="btn-primary" onclick="saveCon()">✓ Dodaj</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SPRZĘT -->
+<div class="modal-bg" id="modal-eq" onclick="closeModalBg('modal-eq',event)">
+  <div class="modal">
+    <span class="drag-handle"></span>
+    <h2>🔧 Nowy sprzęt / narzędzie</h2>
+    <div class="form-row"><label>Nazwa *</label><input type="text" id="fe-name" placeholder="np. Koparka, Budka narzędziowa, Betoniarka"></div>
+    <div class="form-row"><label>Typ</label>
+      <select id="fe-type" onchange="toggleEqType()">
+        <option value="to-buy">Do kupienia</option>
+        <option value="bought">Kupione</option>
+        <option value="to-rent">Do wynajęcia</option>
+        <option value="rented">Wynajęte</option>
+      </select>
+    </div>
+    <div id="fe-buy-fields">
+      <div class="form-row"><label>Cena zakupu (zł)</label><input type="number" inputmode="decimal" id="fe-price" placeholder="np. 2500"></div>
+    </div>
+    <div id="fe-rent-fields" style="display:none">
+      <div class="form-2">
+        <div class="form-row"><label>Stawka dzienna (zł)</label><input type="number" inputmode="decimal" id="fe-rate" placeholder="np. 350"></div>
+        <div class="form-row"><label>Data wynajmu</label><input type="date" id="fe-rent-start"></div>
+      </div>
+      <div class="form-row"><label>Planowana data zwrotu</label><input type="date" id="fe-rent-end"></div>
+    </div>
+    <div class="form-row"><label>Dostawca / uwagi</label><input type="text" id="fe-note" placeholder="np. Wypożyczalnia ABC, tel. 600 000 000"></div>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeModal('modal-eq')">Anuluj</button>
+      <button class="btn-primary" onclick="saveEq()">✓ Dodaj</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDYCJA WYNAJMU -->
+<div class="modal-bg" id="modal-rental" onclick="closeModalBg('modal-rental',event)">
+  <div class="modal">
+    <span class="drag-handle"></span>
+    <h2>⏱️ Edycja wynajmu</h2>
+    <input type="hidden" id="rental-id">
+    <div class="form-2">
+      <div class="form-row"><label>Data wynajmu</label><input type="date" id="rental-start"></div>
+      <div class="form-row"><label>Data zwrotu</label><input type="date" id="rental-end"></div>
+    </div>
+    <div class="form-row"><label>Stawka dzienna (zł)</label><input type="number" inputmode="decimal" id="rental-rate" placeholder="np. 350"></div>
+    <div class="form-row"><label>Koszt ręczny (zł) — nadpisuje obliczenia</label><input type="number" inputmode="decimal" id="rental-manual" placeholder="Zostaw puste = auto-obliczenia"></div>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeModal('modal-rental')">Anuluj</button>
+      <button class="btn-primary" onclick="saveRental()">✓ Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC0CDnk_eckDjH2P0sEv4LsVktVO325YNE",
+  authDomain: "budowniczy-8489f.firebaseapp.com",
+  projectId: "budowniczy-8489f",
+  storageBucket: "budowniczy-8489f.firebasestorage.app",
+  messagingSenderId: "736121079006",
+  appId: "1:736121079006:web:fe19b37e4e0ea97ab36e4f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Collections
+const matsCol = collection(db, 'materials');
+const consCol = collection(db, 'contractors');
+const eqCol   = collection(db, 'equipment');
+const cfgDoc  = doc(db, 'config', 'main');
+
+// State
+let mats=[], cons=[], eqs=[], budget=0, stages=[];
+let matFilter='all', conFilter='all', eqFilter='all';
+
+const syncDot = document.getElementById('sync-dot');
+function setSynced(ok){ syncDot.className = 'sync-dot ' + (ok?'ok':'err'); }
+
+// Listen to collections
+onSnapshot(matsCol, snap => {
+  mats = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderMats(); renderDashboard(); setSynced(true);
+}, ()=>setSynced(false));
+
+onSnapshot(consCol, snap => {
+  cons = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderCons(); renderDashboard(); setSynced(true);
+}, ()=>setSynced(false));
+
+onSnapshot(eqCol, snap => {
+  eqs = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderEqs(); setSynced(true);
+}, ()=>setSynced(false));
+
+// Load config
+async function loadConfig(){
+  try{
+    const snap = await getDoc(cfgDoc);
+    if(snap.exists()){
+      const d=snap.data();
+      budget=d.budget||0;
+      stages=d.stages||[];
+      if(budget) document.getElementById('budget-input').value=budget;
+      renderBudget(); renderDashboard();
+    }
+  }catch(e){}
+}
+loadConfig();
+
+async function saveConfig(){
+  try{ await setDoc(cfgDoc,{budget,stages}); setSynced(true); }catch(e){ setSynced(false); }
+}
+
+// ===== FORMATS =====
+const fmt = n => Number(n).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł';
+const fmtDate = s => s ? new Date(s).toLocaleDateString('pl-PL') : '—';
+
+const CAT_COLORS={Fundamenty:'#1D9E75',Ściany:'#378ADD',Dach:'#D85A30',Instalacje:'#7F77DD',Wykończenie:'#D4537E','Okna i drzwi':'#BA7517',Elewacja:'#639922',Inne:'#888780'};
+const MAT_STATUS={planned:'Planowane',partial:'Częściowo',bought:'Kupione'};
+const CON_STATUS={planned:'Zaplanowane',active:'W trakcie',done:'Zakończone'};
+const EQ_STATUS={'to-buy':'Do kupienia',bought:'Kupione','to-rent':'Do wynajęcia',rented:'Wynajęte',returned:'Zwrócone'};
+
+// Rental cost calc
+function rentalCost(eq){
+  if(eq.manualCost) return eq.manualCost;
+  if(!eq.rentStart) return 0;
+  const start = new Date(eq.rentStart);
+  const end = eq.rentEnd ? new Date(eq.rentEnd) : new Date();
+  const days = Math.max(1, Math.ceil((end-start)/(1000*60*60*24)));
+  return days * (eq.dayRate||0);
+}
+function rentalDays(eq){
+  if(!eq.rentStart) return 0;
+  const start = new Date(eq.rentStart);
+  const end = eq.rentEnd ? new Date(eq.rentEnd) : new Date();
+  return Math.max(1, Math.ceil((end-start)/(1000*60*60*24)));
+}
+
+// ===== DASHBOARD =====
+function renderDashboard(){
+  const matTotal = mats.reduce((s,i)=>s+i.qty*i.price,0);
+  const conTotal = cons.reduce((s,i)=>s+i.cost,0);
+  const eqTotal  = eqs.reduce((s,i)=>s+(i.type==='bought'||i.type==='to-buy'?(i.price||0):rentalCost(i)),0);
+  const total = matTotal + conTotal + eqTotal;
+
+  const matSpent = mats.filter(i=>i.status==='bought').reduce((s,i)=>s+i.qty*i.price,0)
+                 + mats.filter(i=>i.status==='partial').reduce((s,i)=>s+i.qty*i.price*0.5,0);
+  const conSpent = cons.filter(i=>i.status==='done').reduce((s,i)=>s+i.cost,0)
+                 + cons.filter(i=>i.status==='active').reduce((s,i)=>s+i.cost*0.5,0);
+  const eqSpent  = eqs.filter(i=>i.type==='bought'||i.type==='returned'||i.type==='rented').reduce((s,i)=>s+(i.type==='bought'||i.type==='returned'?(i.price||0):rentalCost(i)),0);
+  const spent = matSpent + conSpent + eqSpent;
+
+  document.getElementById('d-total').textContent = fmt(total);
+  document.getElementById('d-budget').textContent = budget ? fmt(budget) : '—';
+  document.getElementById('d-spent').textContent = fmt(spent);
+  const left = budget ? budget - spent : total - spent;
+  const leftEl = document.getElementById('d-left');
+  leftEl.textContent = fmt(Math.abs(left));
+  leftEl.className = 'metric-value ' + (budget && spent>budget ? 'red' : '');
+
+  const pct = budget ? Math.min(Math.round(spent/budget*100),100) : 0;
+  const bar = document.getElementById('d-bar');
+  bar.style.width = pct+'%';
+  bar.style.background = pct>90?'#A32D2D':pct>70?'#BA7517':'#0F6E56';
+  document.getElementById('d-status').textContent = budget ? (pct+'% budżetu wydano / zobowiązano') : 'Ustaw budżet w zakładce Budżet';
+
+  // By cat
+  const byCat={};
+  mats.forEach(i=>{if(!byCat[i.cat])byCat[i.cat]=0; byCat[i.cat]+=i.qty*i.price;});
+  const catsEl = document.getElementById('d-cats');
+  if(!Object.keys(byCat).length){ catsEl.innerHTML='<p style="font-size:13px;color:#bbb">Brak materiałów</p>'; }
+  else catsEl.innerHTML = Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`
+    <div class="cat-row">
+      <div class="cat-dot" style="background:${CAT_COLORS[cat]||'#888'}"></div>
+      <div style="flex:1"><div class="cat-name">${cat}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${matTotal?Math.round(amt/matTotal*100):0}%;background:${CAT_COLORS[cat]||'#888'}"></div></div>
+      </div>
+      <div class="cat-amt">${fmt(amt)}</div>
+      <div class="cat-pct">${matTotal?Math.round(amt/matTotal*100):0}%</div>
+    </div>`).join('');
+
+  // Contractors summary
+  const conEl = document.getElementById('d-contractors');
+  if(!cons.length){ conEl.innerHTML='<p style="font-size:13px;color:#bbb">Brak usługodawców</p>'; return; }
+  conEl.innerHTML = cons.map(c=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0eb">
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${c.name}</div><div style="font-size:12px;color:#888">${c.serviceType}</div></div>
+      <div style="text-align:right"><div style="font-size:14px;font-weight:600;color:#0F6E56">${fmt(c.cost)}</div><span class="badge badge-${c.status}">${CON_STATUS[c.status]}</span></div>
+    </div>`).join('');
+}
+
+// ===== MATERIALS =====
+function renderMats(){
+  const filtered = matFilter==='all' ? mats : mats.filter(i=>i.status===matFilter);
+  const el = document.getElementById('mat-list');
+  if(!filtered.length){ el.innerHTML=`<div class="empty"><span class="ico">🧱</span>${mats.length?'Brak w tej kategorii':'Naciśnij + żeby dodać materiał'}</div>`; return; }
+  el.innerHTML = filtered.map(item=>`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">${item.name}</div>
+          <div class="card-sub"><span style="width:8px;height:8px;border-radius:50%;background:${CAT_COLORS[item.cat]||'#888'};display:inline-block"></span>${item.cat}${item.note?' · '+item.note:''}</div>
+        </div>
+        <button class="btn-del" onclick="delMat('${item.id}')">🗑</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="card-price">${fmt(item.qty*item.price)}</div>
+        <span class="badge badge-${item.status}">${MAT_STATUS[item.status]}</span>
+      </div>
+      <div class="card-details"><span>📦 ${item.qty} ${item.unit}</span><span>💰 ${fmt(item.price)}/${item.unit}</span></div>
+    </div>`).join('');
+}
+window.filterMat = (f,btn) => { matFilter=f; document.querySelectorAll('#tab-materials .chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderMats(); };
+window.delMat = async id => { if(!confirm('Usunąć?'))return; await deleteDoc(doc(db,'materials',id)); };
+
+// ===== CONTRACTORS =====
+function renderCons(){
+  const filtered = conFilter==='all' ? cons : cons.filter(i=>i.status===conFilter);
+  const el = document.getElementById('con-list');
+  if(!filtered.length){ el.innerHTML=`<div class="empty"><span class="ico">👷</span>${cons.length?'Brak w tej kategorii':'Naciśnij + żeby dodać usługodawcę'}</div>`; return; }
+  el.innerHTML = filtered.map(c=>`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">${c.name}</div>
+          <div class="card-sub">${c.serviceType}${c.phone?' · 📞 <a href="tel:'+c.phone+'" style="color:#0F6E56;text-decoration:none">'+c.phone+'</a>':''}</div>
+        </div>
+        <button class="btn-del" onclick="delCon('${c.id}')">🗑</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0">
+        <div class="card-price">${fmt(c.cost)}</div>
+        <span class="badge badge-${c.status}">${CON_STATUS[c.status]}</span>
+      </div>
+      <div class="card-details">
+        ${c.start?'<span>▶ '+fmtDate(c.start)+'</span>':''}
+        ${c.end?'<span>⏹ '+fmtDate(c.end)+'</span>':''}
+      </div>
+      ${c.note?`<div style="font-size:12px;color:#888;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0eb">💬 ${c.note}</div>`:''}
+    </div>`).join('');
+}
+window.filterCon = (f,btn) => { conFilter=f; document.querySelectorAll('#tab-contractors .chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderCons(); };
+window.delCon = async id => { if(!confirm('Usunąć?'))return; await deleteDoc(doc(db,'contractors',id)); };
+
+// ===== EQUIPMENT =====
+function renderEqs(){
+  const filtered = eqFilter==='all' ? eqs : eqs.filter(i=>i.type===eqFilter);
+  const el = document.getElementById('eq-list');
+  if(!filtered.length){ el.innerHTML=`<div class="empty"><span class="ico">🔧</span>${eqs.length?'Brak w tej kategorii':'Naciśnij + żeby dodać sprzęt'}</div>`; return; }
+  el.innerHTML = filtered.map(eq=>{
+    const isRental = eq.type==='rented'||eq.type==='returned'||eq.type==='to-rent';
+    const cost = isRental ? rentalCost(eq) : (eq.price||0);
+    const days = isRental ? rentalDays(eq) : 0;
+    const isActive = eq.type==='rented';
+    return `<div class="card">
+      <div class="card-header">
+        <div><div class="card-title">${eq.name}</div>
+          <div class="card-sub">${eq.note||''}</div>
+        </div>
+        <button class="btn-del" onclick="delEq('${eq.id}')">🗑</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0">
+        <div class="card-price">${cost?fmt(cost):'—'}</div>
+        <span class="badge badge-${eq.type}">${EQ_STATUS[eq.type]}</span>
+      </div>
+      ${isRental?`<div class="card-details">
+        ${eq.dayRate?'<span>📅 '+eq.dayRate+' zł/dzień</span>':''}
+        ${eq.rentStart?'<span>▶ '+fmtDate(eq.rentStart)+'</span>':''}
+        ${isActive&&!eq.rentEnd?'<span class="rental-timer">⏱ '+days+' dni (trwa)</span>':''}
+        ${eq.rentEnd?'<span>⏹ '+fmtDate(eq.rentEnd)+' ('+days+' dni)</span>':''}
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-return" onclick="openRentalEdit('${eq.id}')">✏️ Edytuj wynajem</button>
+        ${isActive?`<button class="btn-return" onclick="returnEq('${eq.id}')">✅ Oznacz zwrócono</button>`:''}
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+window.filterEq = (f,btn) => { eqFilter=f; document.querySelectorAll('#tab-equipment .chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderEqs(); };
+window.delEq = async id => { if(!confirm('Usunąć?'))return; await deleteDoc(doc(db,'equipment',id)); };
+window.returnEq = async id => {
+  const today = new Date().toISOString().split('T')[0];
+  await updateDoc(doc(db,'equipment',id),{type:'returned',rentEnd:today});
+};
+window.openRentalEdit = id => {
+  const eq = eqs.find(e=>e.id===id);
+  if(!eq) return;
+  document.getElementById('rental-id').value = id;
+  document.getElementById('rental-start').value = eq.rentStart||'';
+  document.getElementById('rental-end').value = eq.rentEnd||'';
+  document.getElementById('rental-rate').value = eq.dayRate||'';
+  document.getElementById('rental-manual').value = eq.manualCost||'';
+  document.getElementById('modal-rental').classList.add('open');
+};
+window.saveRental = async () => {
+  const id = document.getElementById('rental-id').value;
+  const data = {
+    rentStart: document.getElementById('rental-start').value,
+    rentEnd: document.getElementById('rental-end').value,
+    dayRate: parseFloat(document.getElementById('rental-rate').value)||0,
+    manualCost: parseFloat(document.getElementById('rental-manual').value)||0
+  };
+  await updateDoc(doc(db,'equipment',id), data);
+  closeModal('modal-rental');
+};
+
+// ===== TABS =====
+const TABS = ['dashboard','materials','contractors','equipment','calc','budget'];
+window.switchTab = t => {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('.tab')[TABS.indexOf(t)].classList.add('active');
+  const showFab = ['materials','contractors','equipment'].includes(t);
+  document.getElementById('fab').className = 'fab' + (showFab?' show':'');
+  window._currentTab = t;
+  if(t==='budget') renderBudget();
+  if(t==='dashboard') renderDashboard();
+};
+window._currentTab = 'dashboard';
+
+// ===== FAB / MODALS =====
+window.openModal = () => {
+  const t = window._currentTab;
+  if(t==='materials') document.getElementById('modal-mat').classList.add('open');
+  else if(t==='contractors') document.getElementById('modal-con').classList.add('open');
+  else if(t==='equipment') document.getElementById('modal-eq').classList.add('open');
+};
+window.closeModal = id => {
+  document.getElementById(id).classList.remove('open');
+};
+window.closeModalBg = (id,e) => {
+  if(e.target===document.getElementById(id)) closeModal(id);
+};
+
+// ===== SAVE MAT =====
+window.saveMat = async () => {
+  const name=document.getElementById('fm-name').value.trim();
+  const qty=parseFloat(document.getElementById('fm-qty').value);
+  const price=parseFloat(document.getElementById('fm-price').value);
+  if(!name||!qty||!price){alert('Wypełnij: nazwa, ilość i cena');return;}
+  await addDoc(matsCol,{name,cat:document.getElementById('fm-cat').value,qty,price,unit:document.getElementById('fm-unit').value,status:document.getElementById('fm-status').value,note:document.getElementById('fm-note').value.trim()});
+  ['fm-name','fm-qty','fm-price','fm-note'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modal-mat');
+};
+
+// ===== SAVE CON =====
+window.saveCon = async () => {
+  const name=document.getElementById('fc-name').value.trim();
+  const cost=parseFloat(document.getElementById('fc-cost').value);
+  if(!name||!cost){alert('Wypełnij: nazwa i koszt');return;}
+  await addDoc(consCol,{name,serviceType:document.getElementById('fc-type').value,cost,status:document.getElementById('fc-status').value,start:document.getElementById('fc-start').value,end:document.getElementById('fc-end').value,phone:document.getElementById('fc-phone').value.trim(),note:document.getElementById('fc-note').value.trim()});
+  ['fc-name','fc-cost','fc-start','fc-end','fc-phone','fc-note'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modal-con');
+};
+
+// ===== SAVE EQ =====
+window.toggleEqType = () => {
+  const t = document.getElementById('fe-type').value;
+  document.getElementById('fe-buy-fields').style.display = (t==='to-buy'||t==='bought')?'block':'none';
+  document.getElementById('fe-rent-fields').style.display = (t==='to-rent'||t==='rented')?'block':'none';
+};
+window.saveEq = async () => {
+  const name=document.getElementById('fe-name').value.trim();
+  const type=document.getElementById('fe-type').value;
+  if(!name){alert('Wpisz nazwę');return;}
+  const data={name,type,note:document.getElementById('fe-note').value.trim()};
+  if(type==='to-buy'||type==='bought') data.price=parseFloat(document.getElementById('fe-price').value)||0;
+  else{ data.dayRate=parseFloat(document.getElementById('fe-rate').value)||0; data.rentStart=document.getElementById('fe-rent-start').value; data.rentEnd=document.getElementById('fe-rent-end').value; data.manualCost=0; }
+  await addDoc(eqCol,data);
+  ['fe-name','fe-price','fe-rate','fe-rent-start','fe-rent-end','fe-note'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modal-eq');
+};
+
+// ===== BUDGET =====
+window.saveBudget = () => {
+  budget = parseFloat(document.getElementById('budget-input').value)||0;
+  saveConfig(); renderDashboard();
+};
+window.addStage = () => {
+  const name=prompt('Nazwa etapu (np. Stan zero):');
+  if(!name)return;
+  const amt=parseFloat(prompt('Szacunkowy koszt etapu (zł):')||'0');
+  stages.push({name,amount:amt||0});
+  saveConfig(); renderBudget();
+};
+window.deleteStage = i => {
+  if(!confirm('Usunąć etap?'))return;
+  stages.splice(i,1); saveConfig(); renderBudget();
+};
+function renderBudget(){
+  const bud=budget;
+  if(bud) document.getElementById('budget-input').value=bud;
+  const el=document.getElementById('stages-list');
+  if(!stages.length){el.innerHTML='<p style="font-size:13px;color:#aaa;padding:8px 0">Brak etapów. Dodaj np. Stan zero, Stan surowy, Wykończenie…</p>';return;}
+  el.innerHTML=stages.map((s,i)=>`
+    <div class="stage-row">
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${s.name}</div><div style="font-size:13px;color:#0F6E56;font-weight:600">${fmt(s.amount||0)}</div></div>
+      <button class="btn-del" onclick="deleteStage(${i})">🗑</button>
+    </div>`).join('');
+}
+
+// ===== CALCULATORS =====
+window.setCalc = (t,btn) => {
+  document.querySelectorAll('.calc-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  document.querySelectorAll('.calc-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('calc-'+t).classList.add('active');
+};
+window.calcBeton = () => {
+  const dl=parseFloat(document.getElementById('c-dl').value)||0, sz=parseFloat(document.getElementById('c-sz').value)||0, gr=parseFloat(document.getElementById('c-gr').value)||0, klasa=parseFloat(document.getElementById('c-klasa').value)||400;
+  const el=document.getElementById('res-beton'); if(!dl||!sz||!gr){el.innerHTML='';return;}
+  const m3=dl*sz*(gr/100), worki=Math.ceil(m3*klasa/50*1.05);
+  el.innerHTML=`<div class="calc-result"><strong>Objętość betonu: ${m3.toFixed(2)} m³</strong>Cement (worki 50kg): <b>${worki} szt</b><br>Piasek: ~${(m3*1.6).toFixed(1)} t<br>Żwir: ~${(m3*2).toFixed(1)} t<span class="note">+5% narzut strat wliczony</span></div>`;
+};
+window.calcCegla = () => {
+  const dl=parseFloat(document.getElementById('cg-dl').value)||0, h=parseFloat(document.getElementById('cg-h').value)||0, szt=parseFloat(document.getElementById('cg-typ').value)||55, cena=parseFloat(document.getElementById('cg-cena').value)||0;
+  const el=document.getElementById('res-cegla'); if(!dl||!h){el.innerHTML='';return;}
+  const pow=dl*h, ilosc=Math.ceil(pow*szt*1.05);
+  el.innerHTML=`<div class="calc-result"><strong>Powierzchnia: ${pow.toFixed(1)} m²</strong>Ilość: <b>${ilosc.toLocaleString('pl-PL')} szt</b><br>${cena?'Koszt: <b>'+fmt(ilosc*cena)+'</b><br>':''}<span class="note">+5% narzut strat wliczony</span></div>`;
+};
+window.calcTynk = () => {
+  const pow=parseFloat(document.getElementById('t-pow').value)||0, gr=parseFloat(document.getElementById('t-gr').value)||15, cena=parseFloat(document.getElementById('t-cena').value)||0;
+  const el=document.getElementById('res-tynk'); if(!pow){el.innerHTML='';return;}
+  const worki=Math.ceil(pow*(gr/10)*1.6*1.1/25);
+  el.innerHTML=`<div class="calc-result"><strong>Worki tynku (25kg): ~${worki} szt</strong>${cena?'Koszt: <b>'+fmt(worki*cena)+'</b><br>':''}<span class="note">+10% narzut strat wliczony</span></div>`;
+};
+window.calcPlytki = () => {
+  const dl=parseFloat(document.getElementById('p-dl').value)||0, sz=parseFloat(document.getElementById('p-sz').value)||0, rozm=parseFloat(document.getElementById('p-rozm').value)||0.25, cena=parseFloat(document.getElementById('p-cena').value)||0;
+  const el=document.getElementById('res-plytki'); if(!dl||!sz){el.innerHTML='';return;}
+  const pow=dl*sz, szt=Math.ceil(pow/rozm*1.1);
+  el.innerHTML=`<div class="calc-result"><strong>Powierzchnia: ${pow.toFixed(1)} m²</strong>Płytki: <b>${szt.toLocaleString('pl-PL')} szt</b><br>${cena?'Koszt: <b>'+fmt(pow*1.1*cena)+'</b><br>':''}<span class="note">+10% narzut strat wliczony</span></div>`;
+};
+</script>
+
+<script>
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+</script>
+</body>
+</html>
