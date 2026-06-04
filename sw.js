@@ -1,4 +1,4 @@
-const CACHE = 'budowniczy-v1';
+const CACHE = 'budowniczy-v2';
 const FILES = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {

@@ -22,7 +22,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sync-dot.err{background:#e53}
 .tabs{display:flex;background:#fff;border-bottom:1px solid #e5e5e0;position:sticky;top:65px;z-index:49;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:1;min-width:64px;padding:9px 4px 7px;text-align:center;font-size:10px;color:#999;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:600;white-space:nowrap}
+.tab{flex:1;min-width:60px;padding:9px 4px 7px;text-align:center;font-size:10px;color:#999;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:600;white-space:nowrap}
 .tab .ico{font-size:20px}
 .tab.active{color:#0F6E56;border-bottom-color:#0F6E56}
 .section{padding:16px;display:none}
@@ -97,6 +97,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary{flex:1;background:#0F6E56;color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
 .btn-primary:active{opacity:.85}
 .btn-cancel{flex:0 0 auto;background:#f5f5f0;border:none;color:#888;padding:14px 16px;border-radius:12px;font-size:15px;cursor:pointer;font-weight:500}
+.btn-danger{flex:0 0 auto;background:#FCEBEB;border:none;color:#A32D2D;padding:14px 16px;border-radius:12px;font-size:15px;cursor:pointer;font-weight:500}
 
 /* Calc */
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
@@ -109,23 +110,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .calc-result strong{font-size:19px;display:block;margin-bottom:6px;color:#0F6E56;font-weight:700}
 .calc-result .note{font-size:11px;color:#5DCAA5;margin-top:4px;display:block}
 
-/* Budget */
-.budget-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #e5e5e0}
-.stage-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #f0f0eb}
-.stage-row:last-child{border-bottom:none}
-.btn-add-stage{width:100%;margin-top:12px;background:#f5f5f0;border:1.5px dashed #ddd;color:#888;padding:12px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:500}
-
-/* Equipment rental timer */
+/* Equipment rental */
 .rental-timer{font-size:12px;color:#6B21A8;font-weight:600;margin-top:4px}
 .btn-return{font-size:12px;padding:5px 12px;border-radius:8px;background:#F3E8FF;color:#6B21A8;border:none;cursor:pointer;font-weight:600;margin-top:6px}
 .btn-return:active{background:#E9D5FF}
 
-/* Empty state */
+/* Empty */
 .empty{text-align:center;padding:48px 20px;color:#bbb}
 .empty .ico{font-size:48px;display:block;margin-bottom:10px}
-
-/* Loading */
 .loading{text-align:center;padding:40px;color:#bbb;font-size:14px}
+
+/* Harmonogram */
+.stage-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #e5e5e0;border-left:4px solid #ccc;cursor:pointer;transition:opacity .1s}
+.stage-card:active{opacity:.8}
+.stage-card.status-inprog{border-left-color:#2A7DD1}
+.stage-card.status-done{border-left-color:#0F6E56}
+.stage-nums{display:flex;gap:20px;margin-top:8px}
+.stage-num-item{display:flex;flex-direction:column;gap:2px}
+.stage-num-label{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.stage-num-val{font-size:14px;font-weight:600;color:#1a1a1a}
+.sbadge{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:600;white-space:nowrap}
+.sbadge-planned{background:#f0f0eb;color:#888}
+.sbadge-inprog{background:#E6F1FB;color:#185FA5}
+.sbadge-done{background:#EAF3DE;color:#3B6D11}
+.harm-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.harm-stat{background:#fff;border-radius:12px;padding:10px;border:1px solid #e5e5e0;text-align:center}
+.harm-stat-num{font-size:22px;font-weight:700;color:#1a1a1a}
+.harm-stat-label{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.stage-date{font-size:11px;color:#aaa;margin-top:3px}
+.stage-notes{font-size:12px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f0;line-height:1.4}
+.btn-add-stage{width:100%;margin-top:4px;background:#f5f5f0;border:1.5px dashed #ddd;color:#888;padding:12px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:500}
+.btn-add-stage:active{background:#eee}
 </style>
 </head>
 <body>
@@ -145,7 +160,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="tab" onclick="switchTab('contractors')"><span class="ico">👷</span>Usługi</div>
   <div class="tab" onclick="switchTab('equipment')"><span class="ico">🔧</span>Sprzęt</div>
   <div class="tab" onclick="switchTab('calc')"><span class="ico">🔢</span>Kalkulator</div>
-  <div class="tab" onclick="switchTab('budget')"><span class="ico">💰</span>Budżet</div>
+  <div class="tab" onclick="switchTab('budget')"><span class="ico">📅</span>Harmonogram</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -158,7 +173,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
   <div class="total-bar"><div class="total-fill" id="d-bar" style="background:#0F6E56;width:0%"></div></div>
   <p id="d-status" style="font-size:12px;color:#888;margin-bottom:18px">Ładowanie…</p>
-  <div class="section-title">Materiały wg kategorii</div>
+  <div class="section-title">Postęp etapów</div>
+  <div id="d-stages"></div>
+  <div class="section-title" style="margin-top:16px">Materiały wg kategorii</div>
   <div id="d-cats"></div>
   <div class="section-title" style="margin-top:16px">Usługi — podsumowanie</div>
   <div id="d-contractors"></div>
@@ -258,21 +275,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- BUDŻET -->
+<!-- HARMONOGRAM -->
 <div id="tab-budget" class="section">
-  <div class="budget-card">
+  <div class="card" style="margin-bottom:14px">
     <div class="section-title">Całkowity budżet inwestycji</div>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">
       <span style="font-size:14px;font-weight:500">Planowany budżet</span>
-      <input type="number" inputmode="decimal" id="budget-input" placeholder="np. 500000" oninput="saveBudget()" style="max-width:160px;text-align:right;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;font-size:15px">
+      <input type="number" inputmode="decimal" id="budget-input" placeholder="np. 913500" oninput="saveBudget()" style="max-width:160px;text-align:right;padding:10px 12px;border:1.5px solid #e5e5e0;border-radius:10px;font-size:15px">
     </div>
-    <p style="font-size:12px;color:#888">Wpisz budżet żeby śledzić postęp wydatków</p>
+    <p style="font-size:12px;color:#888">Ustaw budżet żeby śledzić procent wydatków</p>
   </div>
-  <div class="budget-card">
-    <div class="section-title">Etapy budowy</div>
-    <div id="stages-list"></div>
-    <button class="btn-add-stage" onclick="addStage()">+ Dodaj etap budowy</button>
+  <div class="harm-stats">
+    <div class="harm-stat"><div class="harm-stat-num" id="h-planned">0</div><div class="harm-stat-label">Planowane</div></div>
+    <div class="harm-stat"><div class="harm-stat-num" style="color:#2A7DD1" id="h-inprog">0</div><div class="harm-stat-label">W toku</div></div>
+    <div class="harm-stat"><div class="harm-stat-num" style="color:#0F6E56" id="h-done">0</div><div class="harm-stat-label">Zakończone</div></div>
   </div>
+  <div class="section-title">Etapy budowy</div>
+  <div id="stages-list"></div>
+  <button class="btn-add-stage" onclick="openNewStage()">+ Dodaj własny etap</button>
 </div>
 
 <!-- FAB -->
@@ -282,19 +302,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="modal-bg" id="modal-mat" onclick="closeModalBg('modal-mat',event)">
   <div class="modal">
     <span class="drag-handle"></span>
-    <h2>🧱 Nowy materiał</h2>
-    <div class="form-row"><label>Nazwa materiału *</label><input type="text" id="fm-name" placeholder="np. Cegła ceramiczna pełna"></div>
+    <h2>🧱 Nowy materiał / wydatek</h2>
+    <div class="form-row"><label>Nazwa *</label><input type="text" id="fm-name" placeholder="np. Cegła ceramiczna, Zakup działki…"></div>
     <div class="form-row"><label>Kategoria</label>
       <select id="fm-cat">
-        <option>Fundamenty</option><option>Ściany</option><option>Dach</option>
-        <option>Instalacje</option><option>Wykończenie</option><option>Okna i drzwi</option>
-        <option>Elewacja</option><option>Inne</option>
+        <optgroup label="Formalności i grunt">
+          <option>Działka</option>
+          <option>Formalności</option>
+        </optgroup>
+        <optgroup label="Budowa">
+          <option>Fundamenty</option>
+          <option>Ściany</option>
+          <option>Dach</option>
+          <option>Okna i drzwi</option>
+          <option>Elewacja</option>
+          <option>Instalacje</option>
+          <option>Fotowoltaika</option>
+          <option>Wykończenie</option>
+        </optgroup>
+        <optgroup label="Otoczenie">
+          <option>Ogrodzenie</option>
+          <option>Przyłącza</option>
+          <option>Zagospodarowanie</option>
+        </optgroup>
+        <optgroup label="Inne">
+          <option>Inne</option>
+        </optgroup>
       </select>
     </div>
     <div class="form-2">
       <div class="form-row"><label>Ilość *</label><input type="number" inputmode="decimal" id="fm-qty" placeholder="np. 5000"></div>
       <div class="form-row"><label>Jednostka</label>
-        <select id="fm-unit"><option>szt</option><option>m²</option><option>m³</option><option>mb</option><option>kg</option><option>t</option><option>worek</option><option>kpl</option></select>
+        <select id="fm-unit"><option>szt</option><option>m²</option><option>m³</option><option>mb</option><option>kg</option><option>t</option><option>worek</option><option>kpl</option><option>usługa</option></select>
       </div>
     </div>
     <div class="form-2">
@@ -303,7 +342,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <select id="fm-status"><option value="planned">Planowane</option><option value="partial">Częściowo</option><option value="bought">Kupione</option></select>
       </div>
     </div>
-    <div class="form-row"><label>Dostawca / uwagi</label><input type="text" id="fm-note" placeholder="np. Cegielnia Kowalski"></div>
+    <div class="form-row"><label>Dostawca / uwagi</label><input type="text" id="fm-note" placeholder="np. Notariusz Kowalski, Cegielnia…"></div>
     <div class="btn-row">
       <button class="btn-cancel" onclick="closeModal('modal-mat')">Anuluj</button>
       <button class="btn-primary" onclick="saveMat()">✓ Dodaj</button>
@@ -322,7 +361,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <option>Murarka</option><option>Fundamenty</option><option>Dach / dekarstwo</option>
         <option>Elektryk</option><option>Hydraulik</option><option>Tynkowanie</option>
         <option>Wylewka</option><option>Okna / drzwi</option><option>Elewacja</option>
-        <option>Wykończenie</option><option>Ocieplenie</option><option>Inne</option>
+        <option>Ogrodzenie</option><option>Fotowoltaika</option><option>Instalacja grzewcza</option>
+        <option>Wykończenie</option><option>Ocieplenie</option><option>Geodeta</option>
+        <option>Architekt</option><option>Kierownik budowy</option><option>Inne</option>
       </select>
     </div>
     <div class="form-2">
@@ -395,6 +436,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- MODAL ETAP HARMONOGRAMU -->
+<div class="modal-bg" id="modal-stage" onclick="closeModalBg('modal-stage',event)">
+  <div class="modal">
+    <span class="drag-handle"></span>
+    <h2 id="stage-modal-title">📅 Edytuj etap</h2>
+    <div class="form-row"><label>Nazwa etapu *</label><input type="text" id="sh-name" placeholder="np. Stan surowy otwarty"></div>
+    <div class="form-row"><label>Status</label>
+      <select id="sh-status">
+        <option value="planned">Planowany</option>
+        <option value="inprog">W toku</option>
+        <option value="done">Zakończony</option>
+      </select>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Koszt planowany (zł)</label><input type="number" inputmode="decimal" id="sh-plan" placeholder="np. 72000"></div>
+      <div class="form-row"><label>Koszt realny (zł)</label><input type="number" inputmode="decimal" id="sh-actual" placeholder="—"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Data rozpoczęcia</label><input type="date" id="sh-start"></div>
+      <div class="form-row"><label>Planowane zakończenie</label><input type="date" id="sh-end"></div>
+    </div>
+    <div class="form-row"><label>Notatki</label><textarea id="sh-notes" placeholder="Uwagi, wykonawcy, ważne info…"></textarea></div>
+    <div class="btn-row">
+      <button class="btn-danger" id="stage-del-btn" onclick="deleteStageEdit()">Usuń</button>
+      <button class="btn-cancel" onclick="closeModal('modal-stage')">Anuluj</button>
+      <button class="btn-primary" onclick="saveStageEdit()">✓ Zapisz</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -412,20 +483,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Collections
 const matsCol = collection(db, 'materials');
 const consCol = collection(db, 'contractors');
 const eqCol   = collection(db, 'equipment');
 const cfgDoc  = doc(db, 'config', 'main');
 
-// State
 let mats=[], cons=[], eqs=[], budget=0, stages=[];
 let matFilter='all', conFilter='all', eqFilter='all';
+let editingStageIdx = -1;
 
 const syncDot = document.getElementById('sync-dot');
 function setSynced(ok){ syncDot.className = 'sync-dot ' + (ok?'ok':'err'); }
 
-// Listen to collections
 onSnapshot(matsCol, snap => {
   mats = snap.docs.map(d=>({id:d.id,...d.data()}));
   renderMats(); renderDashboard(); setSynced(true);
@@ -441,16 +510,44 @@ onSnapshot(eqCol, snap => {
   renderEqs(); setSynced(true);
 }, ()=>setSynced(false));
 
-// Load config
+// Default stages from kosztorys Kaila
+function defaultStages(){
+  return [
+    {name:'Projekt i formalności',plan:22500,actual:0,start:'',end:'',status:'planned',notes:'Projekt Kaila, adaptacja, badania gruntu, kierownik budowy, geodeta'},
+    {name:'Przyłącza mediów',plan:18000,actual:0,start:'',end:'',status:'planned',notes:'Elektryczne, wodociąg, oczyszczalnia biologiczna'},
+    {name:'Stan zerowy — fundamenty',plan:72000,actual:0,start:'',end:'',status:'planned',notes:'Roboty ziemne, ławy, ściany fundamentowe, izolacje, drenaż'},
+    {name:'Stan surowy otwarty',plan:175000,actual:0,start:'',end:'',status:'planned',notes:'Ściany zewnętrzne i wewnętrzne, strop, więźba dachowa'},
+    {name:'Stan surowy zamknięty',plan:145000,actual:0,start:'',end:'',status:'planned',notes:'Dach, okna, drzwi zewnętrzne, brama, elewacja'},
+    {name:'Instalacje',plan:107000,actual:0,start:'',end:'',status:'planned',notes:'Pompa ciepła, ogrzewanie podłogowe, wod-kan, elektryka'},
+    {name:'Fotowoltaika',plan:68000,actual:0,start:'',end:'',status:'planned',notes:'10-12 kWp + inwerter hybrydowy + magazyn 10 kWh LFP'},
+    {name:'Stan deweloperski',plan:48000,actual:0,start:'',end:'',status:'planned',notes:'Tynki (sam), wylewki anhydrytowe (firma), g-k'},
+    {name:'Wykończenie wnętrz',plan:95000,actual:0,start:'',end:'',status:'planned',notes:'Podłogi, łazienki, kuchnia, malowanie, drzwi — praca własna'},
+    {name:'Elementy zewnętrzne',plan:65000,actual:0,start:'',end:'',status:'planned',notes:'Taras, podjazd, ogrodzenie, brama wjazdowa'},
+  ];
+}
+
 async function loadConfig(){
   try{
     const snap = await getDoc(cfgDoc);
     if(snap.exists()){
       const d=snap.data();
       budget=d.budget||0;
-      stages=d.stages||[];
+      // migrate old format {name, amount} → new format
+      stages=(d.stages||[]).map(s=>({
+        name:s.name||'',
+        plan: s.plan!==undefined ? s.plan : (s.amount||0),
+        actual: s.actual||0,
+        start: s.start||'',
+        end: s.end||'',
+        status: s.status||'planned',
+        notes: s.notes||''
+      }));
+      if(!stages.length) stages=defaultStages();
       if(budget) document.getElementById('budget-input').value=budget;
       renderBudget(); renderDashboard();
+    } else {
+      stages=defaultStages();
+      renderBudget();
     }
   }catch(e){}
 }
@@ -462,63 +559,89 @@ async function saveConfig(){
 
 // ===== FORMATS =====
 const fmt = n => Number(n).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł';
-const fmtDate = s => s ? new Date(s).toLocaleDateString('pl-PL') : '—';
+const fmtDate = s => { if(!s)return'—'; const[y,m,d]=s.split('-'); return`${d}.${m}.${y}`; };
 
-const CAT_COLORS={Fundamenty:'#1D9E75',Ściany:'#378ADD',Dach:'#D85A30',Instalacje:'#7F77DD',Wykończenie:'#D4537E','Okna i drzwi':'#BA7517',Elewacja:'#639922',Inne:'#888780'};
+const CAT_COLORS={
+  Działka:'#8B6914',
+  Formalności:'#6B7F9E',
+  Fundamenty:'#1D9E75',
+  Ściany:'#378ADD',
+  Dach:'#D85A30',
+  Instalacje:'#7F77DD',
+  Wykończenie:'#D4537E',
+  'Okna i drzwi':'#BA7517',
+  Elewacja:'#639922',
+  Fotowoltaika:'#C8A000',
+  Ogrodzenie:'#2D7D2D',
+  Przyłącza:'#CC6600',
+  Zagospodarowanie:'#4A9B4A',
+  Inne:'#888780'
+};
 const MAT_STATUS={planned:'Planowane',partial:'Częściowo',bought:'Kupione'};
 const CON_STATUS={planned:'Zaplanowane',active:'W trakcie',done:'Zakończone'};
 const EQ_STATUS={'to-buy':'Do kupienia',bought:'Kupione','to-rent':'Do wynajęcia',rented:'Wynajęte',returned:'Zwrócone'};
+const STAGE_STATUS={planned:'Planowany',inprog:'W toku',done:'Zakończony'};
 
-// Rental cost calc
 function rentalCost(eq){
   if(eq.manualCost) return eq.manualCost;
   if(!eq.rentStart) return 0;
-  const start = new Date(eq.rentStart);
-  const end = eq.rentEnd ? new Date(eq.rentEnd) : new Date();
-  const days = Math.max(1, Math.ceil((end-start)/(1000*60*60*24)));
-  return days * (eq.dayRate||0);
+  const start=new Date(eq.rentStart), end=eq.rentEnd?new Date(eq.rentEnd):new Date();
+  return Math.max(1,Math.ceil((end-start)/(1000*60*60*24)))*(eq.dayRate||0);
 }
 function rentalDays(eq){
   if(!eq.rentStart) return 0;
-  const start = new Date(eq.rentStart);
-  const end = eq.rentEnd ? new Date(eq.rentEnd) : new Date();
-  return Math.max(1, Math.ceil((end-start)/(1000*60*60*24)));
+  const start=new Date(eq.rentStart), end=eq.rentEnd?new Date(eq.rentEnd):new Date();
+  return Math.max(1,Math.ceil((end-start)/(1000*60*60*24)));
 }
 
 // ===== DASHBOARD =====
 function renderDashboard(){
-  const matTotal = mats.reduce((s,i)=>s+i.qty*i.price,0);
-  const conTotal = cons.reduce((s,i)=>s+i.cost,0);
-  const eqTotal  = eqs.reduce((s,i)=>s+(i.type==='bought'||i.type==='to-buy'?(i.price||0):rentalCost(i)),0);
-  const total = matTotal + conTotal + eqTotal;
+  const matTotal=mats.reduce((s,i)=>s+i.qty*i.price,0);
+  const conTotal=cons.reduce((s,i)=>s+i.cost,0);
+  const eqTotal=eqs.reduce((s,i)=>s+(i.type==='bought'||i.type==='to-buy'?(i.price||0):rentalCost(i)),0);
+  const total=matTotal+conTotal+eqTotal;
 
-  const matSpent = mats.filter(i=>i.status==='bought').reduce((s,i)=>s+i.qty*i.price,0)
-                 + mats.filter(i=>i.status==='partial').reduce((s,i)=>s+i.qty*i.price*0.5,0);
-  const conSpent = cons.filter(i=>i.status==='done').reduce((s,i)=>s+i.cost,0)
-                 + cons.filter(i=>i.status==='active').reduce((s,i)=>s+i.cost*0.5,0);
-  const eqSpent  = eqs.filter(i=>i.type==='bought'||i.type==='returned'||i.type==='rented').reduce((s,i)=>s+(i.type==='bought'||i.type==='returned'?(i.price||0):rentalCost(i)),0);
-  const spent = matSpent + conSpent + eqSpent;
+  const matSpent=mats.filter(i=>i.status==='bought').reduce((s,i)=>s+i.qty*i.price,0)
+               +mats.filter(i=>i.status==='partial').reduce((s,i)=>s+i.qty*i.price*0.5,0);
+  const conSpent=cons.filter(i=>i.status==='done').reduce((s,i)=>s+i.cost,0)
+               +cons.filter(i=>i.status==='active').reduce((s,i)=>s+i.cost*0.5,0);
+  const eqSpent=eqs.filter(i=>i.type==='bought'||i.type==='returned'||i.type==='rented').reduce((s,i)=>s+(i.type==='bought'||i.type==='returned'?(i.price||0):rentalCost(i)),0);
+  const spent=matSpent+conSpent+eqSpent;
 
-  document.getElementById('d-total').textContent = fmt(total);
-  document.getElementById('d-budget').textContent = budget ? fmt(budget) : '—';
-  document.getElementById('d-spent').textContent = fmt(spent);
-  const left = budget ? budget - spent : total - spent;
-  const leftEl = document.getElementById('d-left');
-  leftEl.textContent = fmt(Math.abs(left));
-  leftEl.className = 'metric-value ' + (budget && spent>budget ? 'red' : '');
+  document.getElementById('d-total').textContent=fmt(total);
+  document.getElementById('d-budget').textContent=budget?fmt(budget):'—';
+  document.getElementById('d-spent').textContent=fmt(spent);
+  const left=budget?budget-spent:total-spent;
+  const leftEl=document.getElementById('d-left');
+  leftEl.textContent=fmt(Math.abs(left));
+  leftEl.className='metric-value '+(budget&&spent>budget?'red':'');
 
-  const pct = budget ? Math.min(Math.round(spent/budget*100),100) : 0;
-  const bar = document.getElementById('d-bar');
-  bar.style.width = pct+'%';
-  bar.style.background = pct>90?'#A32D2D':pct>70?'#BA7517':'#0F6E56';
-  document.getElementById('d-status').textContent = budget ? (pct+'% budżetu wydano / zobowiązano') : 'Ustaw budżet w zakładce Budżet';
+  const pct=budget?Math.min(Math.round(spent/budget*100),100):0;
+  const bar=document.getElementById('d-bar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct>90?'#A32D2D':pct>70?'#BA7517':'#0F6E56';
+  document.getElementById('d-status').textContent=budget?(pct+'% budżetu wydano / zobowiązano'):'Ustaw budżet w zakładce Harmonogram';
 
-  // By cat
+  // Stages summary
+  const dsEl=document.getElementById('d-stages');
+  if(stages.length){
+    dsEl.innerHTML=stages.map(s=>{
+      const dotColor=s.status==='done'?'#0F6E56':s.status==='inprog'?'#2A7DD1':'#ccc';
+      const cls='sbadge sbadge-'+(s.status==='inprog'?'inprog':s.status==='done'?'done':'planned');
+      return`<div class="cat-row">
+        <div class="cat-dot" style="background:${dotColor}"></div>
+        <div class="cat-name" style="font-size:13px">${s.name}</div>
+        <span class="${cls}" style="font-size:10px;padding:2px 8px">${STAGE_STATUS[s.status]||s.status}</span>
+      </div>`;
+    }).join('');
+  } else { dsEl.innerHTML=''; }
+
+  // By category
   const byCat={};
-  mats.forEach(i=>{if(!byCat[i.cat])byCat[i.cat]=0; byCat[i.cat]+=i.qty*i.price;});
-  const catsEl = document.getElementById('d-cats');
-  if(!Object.keys(byCat).length){ catsEl.innerHTML='<p style="font-size:13px;color:#bbb">Brak materiałów</p>'; }
-  else catsEl.innerHTML = Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`
+  mats.forEach(i=>{if(!byCat[i.cat])byCat[i.cat]=0;byCat[i.cat]+=i.qty*i.price;});
+  const catsEl=document.getElementById('d-cats');
+  if(!Object.keys(byCat).length){catsEl.innerHTML='<p style="font-size:13px;color:#bbb">Brak materiałów</p>';}
+  else catsEl.innerHTML=Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`
     <div class="cat-row">
       <div class="cat-dot" style="background:${CAT_COLORS[cat]||'#888'}"></div>
       <div style="flex:1"><div class="cat-name">${cat}</div>
@@ -528,10 +651,9 @@ function renderDashboard(){
       <div class="cat-pct">${matTotal?Math.round(amt/matTotal*100):0}%</div>
     </div>`).join('');
 
-  // Contractors summary
-  const conEl = document.getElementById('d-contractors');
-  if(!cons.length){ conEl.innerHTML='<p style="font-size:13px;color:#bbb">Brak usługodawców</p>'; return; }
-  conEl.innerHTML = cons.map(c=>`
+  const conEl=document.getElementById('d-contractors');
+  if(!cons.length){conEl.innerHTML='<p style="font-size:13px;color:#bbb">Brak usługodawców</p>';return;}
+  conEl.innerHTML=cons.map(c=>`
     <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0eb">
       <div style="flex:1"><div style="font-size:14px;font-weight:500">${c.name}</div><div style="font-size:12px;color:#888">${c.serviceType}</div></div>
       <div style="text-align:right"><div style="font-size:14px;font-weight:600;color:#0F6E56">${fmt(c.cost)}</div><span class="badge badge-${c.status}">${CON_STATUS[c.status]}</span></div>
@@ -540,10 +662,10 @@ function renderDashboard(){
 
 // ===== MATERIALS =====
 function renderMats(){
-  const filtered = matFilter==='all' ? mats : mats.filter(i=>i.status===matFilter);
-  const el = document.getElementById('mat-list');
-  if(!filtered.length){ el.innerHTML=`<div class="empty"><span class="ico">🧱</span>${mats.length?'Brak w tej kategorii':'Naciśnij + żeby dodać materiał'}</div>`; return; }
-  el.innerHTML = filtered.map(item=>`
+  const filtered=matFilter==='all'?mats:mats.filter(i=>i.status===matFilter);
+  const el=document.getElementById('mat-list');
+  if(!filtered.length){el.innerHTML=`<div class="empty"><span class="ico">🧱</span>${mats.length?'Brak w tej kategorii':'Naciśnij + żeby dodać materiał'}</div>`;return;}
+  el.innerHTML=filtered.map(item=>`
     <div class="card">
       <div class="card-header">
         <div><div class="card-title">${item.name}</div>
@@ -558,15 +680,15 @@ function renderMats(){
       <div class="card-details"><span>📦 ${item.qty} ${item.unit}</span><span>💰 ${fmt(item.price)}/${item.unit}</span></div>
     </div>`).join('');
 }
-window.filterMat = (f,btn) => { matFilter=f; document.querySelectorAll('#tab-materials .chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderMats(); };
-window.delMat = async id => { if(!confirm('Usunąć?'))return; await deleteDoc(doc(db,'materials',id)); };
+window.filterMat=(f,btn)=>{matFilter=f;document.querySelectorAll('#tab-materials .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderMats();};
+window.delMat=async id=>{if(!confirm('Usunąć?'))return;await deleteDoc(doc(db,'materials',id));};
 
 // ===== CONTRACTORS =====
 function renderCons(){
-  const filtered = conFilter==='all' ? cons : cons.filter(i=>i.status===conFilter);
-  const el = document.getElementById('con-list');
-  if(!filtered.length){ el.innerHTML=`<div class="empty"><span class="ico">👷</span>${cons.length?'Brak w tej kategorii':'Naciśnij + żeby dodać usługodawcę'}</div>`; return; }
-  el.innerHTML = filtered.map(c=>`
+  const filtered=conFilter==='all'?cons:cons.filter(i=>i.status===conFilter);
+  const el=document.getElementById('con-list');
+  if(!filtered.length){el.innerHTML=`<div class="empty"><span class="ico">👷</span>${cons.length?'Brak w tej kategorii':'Naciśnij + żeby dodać usługodawcę'}</div>`;return;}
+  el.innerHTML=filtered.map(c=>`
     <div class="card">
       <div class="card-header">
         <div><div class="card-title">${c.name}</div>
@@ -585,20 +707,20 @@ function renderCons(){
       ${c.note?`<div style="font-size:12px;color:#888;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0eb">💬 ${c.note}</div>`:''}
     </div>`).join('');
 }
-window.filterCon = (f,btn) => { conFilter=f; document.querySelectorAll('#tab-contractors .chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderCons(); };
-window.delCon = async id => { if(!confirm('Usunąć?'))return; await deleteDoc(doc(db,'contractors',id)); };
+window.filterCon=(f,btn)=>{conFilter=f;document.querySelectorAll('#tab-contractors .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderCons();};
+window.delCon=async id=>{if(!confirm('Usunąć?'))return;await deleteDoc(doc(db,'contractors',id));};
 
 // ===== EQUIPMENT =====
 function renderEqs(){
-  const filtered = eqFilter==='all' ? eqs : eqs.filter(i=>i.type===eqFilter);
-  const el = document.getElementById('eq-list');
-  if(!filtered.length){ el.innerHTML=`<div class="empty"><span class="ico">🔧</span>${eqs.length?'Brak w tej kategorii':'Naciśnij + żeby dodać sprzęt'}</div>`; return; }
-  el.innerHTML = filtered.map(eq=>{
-    const isRental = eq.type==='rented'||eq.type==='returned'||eq.type==='to-rent';
-    const cost = isRental ? rentalCost(eq) : (eq.price||0);
-    const days = isRental ? rentalDays(eq) : 0;
-    const isActive = eq.type==='rented';
-    return `<div class="card">
+  const filtered=eqFilter==='all'?eqs:eqs.filter(i=>i.type===eqFilter);
+  const el=document.getElementById('eq-list');
+  if(!filtered.length){el.innerHTML=`<div class="empty"><span class="ico">🔧</span>${eqs.length?'Brak w tej kategorii':'Naciśnij + żeby dodać sprzęt'}</div>`;return;}
+  el.innerHTML=filtered.map(eq=>{
+    const isRental=eq.type==='rented'||eq.type==='returned'||eq.type==='to-rent';
+    const cost=isRental?rentalCost(eq):(eq.price||0);
+    const days=isRental?rentalDays(eq):0;
+    const isActive=eq.type==='rented';
+    return`<div class="card">
       <div class="card-header">
         <div><div class="card-title">${eq.name}</div>
           <div class="card-sub">${eq.note||''}</div>
@@ -622,65 +744,56 @@ function renderEqs(){
     </div>`;
   }).join('');
 }
-window.filterEq = (f,btn) => { eqFilter=f; document.querySelectorAll('#tab-equipment .chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderEqs(); };
-window.delEq = async id => { if(!confirm('Usunąć?'))return; await deleteDoc(doc(db,'equipment',id)); };
-window.returnEq = async id => {
-  const today = new Date().toISOString().split('T')[0];
-  await updateDoc(doc(db,'equipment',id),{type:'returned',rentEnd:today});
-};
-window.openRentalEdit = id => {
-  const eq = eqs.find(e=>e.id===id);
-  if(!eq) return;
-  document.getElementById('rental-id').value = id;
-  document.getElementById('rental-start').value = eq.rentStart||'';
-  document.getElementById('rental-end').value = eq.rentEnd||'';
-  document.getElementById('rental-rate').value = eq.dayRate||'';
-  document.getElementById('rental-manual').value = eq.manualCost||'';
+window.filterEq=(f,btn)=>{eqFilter=f;document.querySelectorAll('#tab-equipment .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderEqs();};
+window.delEq=async id=>{if(!confirm('Usunąć?'))return;await deleteDoc(doc(db,'equipment',id));};
+window.returnEq=async id=>{const today=new Date().toISOString().split('T')[0];await updateDoc(doc(db,'equipment',id),{type:'returned',rentEnd:today});};
+window.openRentalEdit=id=>{
+  const eq=eqs.find(e=>e.id===id);if(!eq)return;
+  document.getElementById('rental-id').value=id;
+  document.getElementById('rental-start').value=eq.rentStart||'';
+  document.getElementById('rental-end').value=eq.rentEnd||'';
+  document.getElementById('rental-rate').value=eq.dayRate||'';
+  document.getElementById('rental-manual').value=eq.manualCost||'';
   document.getElementById('modal-rental').classList.add('open');
 };
-window.saveRental = async () => {
-  const id = document.getElementById('rental-id').value;
-  const data = {
-    rentStart: document.getElementById('rental-start').value,
-    rentEnd: document.getElementById('rental-end').value,
-    dayRate: parseFloat(document.getElementById('rental-rate').value)||0,
-    manualCost: parseFloat(document.getElementById('rental-manual').value)||0
-  };
-  await updateDoc(doc(db,'equipment',id), data);
+window.saveRental=async()=>{
+  const id=document.getElementById('rental-id').value;
+  await updateDoc(doc(db,'equipment',id),{
+    rentStart:document.getElementById('rental-start').value,
+    rentEnd:document.getElementById('rental-end').value,
+    dayRate:parseFloat(document.getElementById('rental-rate').value)||0,
+    manualCost:parseFloat(document.getElementById('rental-manual').value)||0
+  });
   closeModal('modal-rental');
 };
 
 // ===== TABS =====
-const TABS = ['dashboard','materials','contractors','equipment','calc','budget'];
-window.switchTab = t => {
+const TABS=['dashboard','materials','contractors','equipment','calc','budget'];
+window.switchTab=t=>{
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
   document.querySelectorAll('.tab')[TABS.indexOf(t)].classList.add('active');
-  const showFab = ['materials','contractors','equipment'].includes(t);
-  document.getElementById('fab').className = 'fab' + (showFab?' show':'');
-  window._currentTab = t;
+  const showFab=['materials','contractors','equipment'].includes(t);
+  document.getElementById('fab').className='fab'+(showFab?' show':'');
+  window._currentTab=t;
   if(t==='budget') renderBudget();
   if(t==='dashboard') renderDashboard();
 };
-window._currentTab = 'dashboard';
+window._currentTab='dashboard';
 
 // ===== FAB / MODALS =====
-window.openModal = () => {
-  const t = window._currentTab;
+window.openModal=()=>{
+  const t=window._currentTab;
   if(t==='materials') document.getElementById('modal-mat').classList.add('open');
   else if(t==='contractors') document.getElementById('modal-con').classList.add('open');
   else if(t==='equipment') document.getElementById('modal-eq').classList.add('open');
 };
-window.closeModal = id => {
-  document.getElementById(id).classList.remove('open');
-};
-window.closeModalBg = (id,e) => {
-  if(e.target===document.getElementById(id)) closeModal(id);
-};
+window.closeModal=id=>document.getElementById(id).classList.remove('open');
+window.closeModalBg=(id,e)=>{if(e.target===document.getElementById(id))closeModal(id);};
 
 // ===== SAVE MAT =====
-window.saveMat = async () => {
+window.saveMat=async()=>{
   const name=document.getElementById('fm-name').value.trim();
   const qty=parseFloat(document.getElementById('fm-qty').value);
   const price=parseFloat(document.getElementById('fm-price').value);
@@ -691,7 +804,7 @@ window.saveMat = async () => {
 };
 
 // ===== SAVE CON =====
-window.saveCon = async () => {
+window.saveCon=async()=>{
   const name=document.getElementById('fc-name').value.trim();
   const cost=parseFloat(document.getElementById('fc-cost').value);
   if(!name||!cost){alert('Wypełnij: nazwa i koszt');return;}
@@ -701,79 +814,135 @@ window.saveCon = async () => {
 };
 
 // ===== SAVE EQ =====
-window.toggleEqType = () => {
-  const t = document.getElementById('fe-type').value;
-  document.getElementById('fe-buy-fields').style.display = (t==='to-buy'||t==='bought')?'block':'none';
-  document.getElementById('fe-rent-fields').style.display = (t==='to-rent'||t==='rented')?'block':'none';
+window.toggleEqType=()=>{
+  const t=document.getElementById('fe-type').value;
+  document.getElementById('fe-buy-fields').style.display=(t==='to-buy'||t==='bought')?'block':'none';
+  document.getElementById('fe-rent-fields').style.display=(t==='to-rent'||t==='rented')?'block':'none';
 };
-window.saveEq = async () => {
+window.saveEq=async()=>{
   const name=document.getElementById('fe-name').value.trim();
   const type=document.getElementById('fe-type').value;
   if(!name){alert('Wpisz nazwę');return;}
   const data={name,type,note:document.getElementById('fe-note').value.trim()};
   if(type==='to-buy'||type==='bought') data.price=parseFloat(document.getElementById('fe-price').value)||0;
-  else{ data.dayRate=parseFloat(document.getElementById('fe-rate').value)||0; data.rentStart=document.getElementById('fe-rent-start').value; data.rentEnd=document.getElementById('fe-rent-end').value; data.manualCost=0; }
+  else{data.dayRate=parseFloat(document.getElementById('fe-rate').value)||0;data.rentStart=document.getElementById('fe-rent-start').value;data.rentEnd=document.getElementById('fe-rent-end').value;data.manualCost=0;}
   await addDoc(eqCol,data);
   ['fe-name','fe-price','fe-rate','fe-rent-start','fe-rent-end','fe-note'].forEach(id=>document.getElementById(id).value='');
   closeModal('modal-eq');
 };
 
-// ===== BUDGET =====
-window.saveBudget = () => {
-  budget = parseFloat(document.getElementById('budget-input').value)||0;
+// ===== HARMONOGRAM =====
+window.saveBudget=()=>{
+  budget=parseFloat(document.getElementById('budget-input').value)||0;
   saveConfig(); renderDashboard();
 };
-window.addStage = () => {
-  const name=prompt('Nazwa etapu (np. Stan zero):');
-  if(!name)return;
-  const amt=parseFloat(prompt('Szacunkowy koszt etapu (zł):')||'0');
-  stages.push({name,amount:amt||0});
-  saveConfig(); renderBudget();
-};
-window.deleteStage = i => {
-  if(!confirm('Usunąć etap?'))return;
-  stages.splice(i,1); saveConfig(); renderBudget();
-};
+
 function renderBudget(){
-  const bud=budget;
-  if(bud) document.getElementById('budget-input').value=bud;
+  if(budget) document.getElementById('budget-input').value=budget;
+  document.getElementById('h-planned').textContent=stages.filter(s=>s.status==='planned').length;
+  document.getElementById('h-inprog').textContent=stages.filter(s=>s.status==='inprog').length;
+  document.getElementById('h-done').textContent=stages.filter(s=>s.status==='done').length;
   const el=document.getElementById('stages-list');
-  if(!stages.length){el.innerHTML='<p style="font-size:13px;color:#aaa;padding:8px 0">Brak etapów. Dodaj np. Stan zero, Stan surowy, Wykończenie…</p>';return;}
-  el.innerHTML=stages.map((s,i)=>`
-    <div class="stage-row">
-      <div style="flex:1"><div style="font-size:14px;font-weight:500">${s.name}</div><div style="font-size:13px;color:#0F6E56;font-weight:600">${fmt(s.amount||0)}</div></div>
-      <button class="btn-del" onclick="deleteStage(${i})">🗑</button>
-    </div>`).join('');
+  if(!stages.length){el.innerHTML='<p style="font-size:13px;color:#aaa;padding:8px 0">Brak etapów</p>';return;}
+  el.innerHTML=stages.map((s,i)=>{
+    const badgeCls='sbadge sbadge-'+(s.status==='inprog'?'inprog':s.status==='done'?'done':'planned');
+    const dateStr=(s.start||s.end)?`<div class="stage-date">${s.start?fmtDate(s.start):'?'} → ${s.end?fmtDate(s.end):'?'}</div>`:'';
+    const notesStr=s.notes?`<div class="stage-notes">${s.notes}</div>`:'';
+    const actualStr=(s.actual>0)?`<div class="stage-num-item"><div class="stage-num-label">Realne</div><div class="stage-num-val" style="color:#0F6E56">${fmt(s.actual)}</div></div>`:'';
+    return`<div class="stage-card status-${s.status}" onclick="editStage(${i})">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div style="flex:1"><div class="card-title" style="font-size:14px">${s.name}</div>${dateStr}</div>
+        <span class="${badgeCls}">${STAGE_STATUS[s.status]||s.status}</span>
+      </div>
+      <div class="stage-nums">
+        <div class="stage-num-item"><div class="stage-num-label">Plan</div><div class="stage-num-val">${fmt(s.plan||0)}</div></div>
+        ${actualStr}
+      </div>
+      ${notesStr}
+    </div>`;
+  }).join('');
 }
 
+window.editStage=idx=>{
+  const s=stages[idx];
+  editingStageIdx=idx;
+  document.getElementById('stage-modal-title').textContent='📅 '+s.name;
+  document.getElementById('sh-name').value=s.name;
+  document.getElementById('sh-status').value=s.status||'planned';
+  document.getElementById('sh-plan').value=s.plan||'';
+  document.getElementById('sh-actual').value=s.actual||'';
+  document.getElementById('sh-start').value=s.start||'';
+  document.getElementById('sh-end').value=s.end||'';
+  document.getElementById('sh-notes').value=s.notes||'';
+  document.getElementById('stage-del-btn').style.display='';
+  document.getElementById('modal-stage').classList.add('open');
+};
+
+window.openNewStage=()=>{
+  editingStageIdx=-1;
+  document.getElementById('stage-modal-title').textContent='📅 Nowy etap';
+  ['sh-name','sh-plan','sh-actual','sh-start','sh-end','sh-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sh-status').value='planned';
+  document.getElementById('stage-del-btn').style.display='none';
+  document.getElementById('modal-stage').classList.add('open');
+};
+
+window.saveStageEdit=()=>{
+  const name=document.getElementById('sh-name').value.trim();
+  if(!name){alert('Wpisz nazwę etapu');return;}
+  const data={
+    name,
+    status:document.getElementById('sh-status').value,
+    plan:parseFloat(document.getElementById('sh-plan').value)||0,
+    actual:parseFloat(document.getElementById('sh-actual').value)||0,
+    start:document.getElementById('sh-start').value,
+    end:document.getElementById('sh-end').value,
+    notes:document.getElementById('sh-notes').value.trim()
+  };
+  if(editingStageIdx>=0) stages[editingStageIdx]={...stages[editingStageIdx],...data};
+  else stages.push(data);
+  saveConfig();
+  closeModal('modal-stage');
+  renderBudget();
+};
+
+window.deleteStageEdit=()=>{
+  if(editingStageIdx<0)return;
+  if(!confirm('Usunąć ten etap?'))return;
+  stages.splice(editingStageIdx,1);
+  saveConfig();
+  closeModal('modal-stage');
+  renderBudget();
+};
+
 // ===== CALCULATORS =====
-window.setCalc = (t,btn) => {
-  document.querySelectorAll('.calc-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+window.setCalc=(t,btn)=>{
+  document.querySelectorAll('.calc-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.querySelectorAll('.calc-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('calc-'+t).classList.add('active');
 };
-window.calcBeton = () => {
-  const dl=parseFloat(document.getElementById('c-dl').value)||0, sz=parseFloat(document.getElementById('c-sz').value)||0, gr=parseFloat(document.getElementById('c-gr').value)||0, klasa=parseFloat(document.getElementById('c-klasa').value)||400;
-  const el=document.getElementById('res-beton'); if(!dl||!sz||!gr){el.innerHTML='';return;}
-  const m3=dl*sz*(gr/100), worki=Math.ceil(m3*klasa/50*1.05);
+window.calcBeton=()=>{
+  const dl=parseFloat(document.getElementById('c-dl').value)||0,sz=parseFloat(document.getElementById('c-sz').value)||0,gr=parseFloat(document.getElementById('c-gr').value)||0,klasa=parseFloat(document.getElementById('c-klasa').value)||400;
+  const el=document.getElementById('res-beton');if(!dl||!sz||!gr){el.innerHTML='';return;}
+  const m3=dl*sz*(gr/100),worki=Math.ceil(m3*klasa/50*1.05);
   el.innerHTML=`<div class="calc-result"><strong>Objętość betonu: ${m3.toFixed(2)} m³</strong>Cement (worki 50kg): <b>${worki} szt</b><br>Piasek: ~${(m3*1.6).toFixed(1)} t<br>Żwir: ~${(m3*2).toFixed(1)} t<span class="note">+5% narzut strat wliczony</span></div>`;
 };
-window.calcCegla = () => {
-  const dl=parseFloat(document.getElementById('cg-dl').value)||0, h=parseFloat(document.getElementById('cg-h').value)||0, szt=parseFloat(document.getElementById('cg-typ').value)||55, cena=parseFloat(document.getElementById('cg-cena').value)||0;
-  const el=document.getElementById('res-cegla'); if(!dl||!h){el.innerHTML='';return;}
-  const pow=dl*h, ilosc=Math.ceil(pow*szt*1.05);
+window.calcCegla=()=>{
+  const dl=parseFloat(document.getElementById('cg-dl').value)||0,h=parseFloat(document.getElementById('cg-h').value)||0,szt=parseFloat(document.getElementById('cg-typ').value)||55,cena=parseFloat(document.getElementById('cg-cena').value)||0;
+  const el=document.getElementById('res-cegla');if(!dl||!h){el.innerHTML='';return;}
+  const pow=dl*h,ilosc=Math.ceil(pow*szt*1.05);
   el.innerHTML=`<div class="calc-result"><strong>Powierzchnia: ${pow.toFixed(1)} m²</strong>Ilość: <b>${ilosc.toLocaleString('pl-PL')} szt</b><br>${cena?'Koszt: <b>'+fmt(ilosc*cena)+'</b><br>':''}<span class="note">+5% narzut strat wliczony</span></div>`;
 };
-window.calcTynk = () => {
-  const pow=parseFloat(document.getElementById('t-pow').value)||0, gr=parseFloat(document.getElementById('t-gr').value)||15, cena=parseFloat(document.getElementById('t-cena').value)||0;
-  const el=document.getElementById('res-tynk'); if(!pow){el.innerHTML='';return;}
+window.calcTynk=()=>{
+  const pow=parseFloat(document.getElementById('t-pow').value)||0,gr=parseFloat(document.getElementById('t-gr').value)||15,cena=parseFloat(document.getElementById('t-cena').value)||0;
+  const el=document.getElementById('res-tynk');if(!pow){el.innerHTML='';return;}
   const worki=Math.ceil(pow*(gr/10)*1.6*1.1/25);
   el.innerHTML=`<div class="calc-result"><strong>Worki tynku (25kg): ~${worki} szt</strong>${cena?'Koszt: <b>'+fmt(worki*cena)+'</b><br>':''}<span class="note">+10% narzut strat wliczony</span></div>`;
 };
-window.calcPlytki = () => {
-  const dl=parseFloat(document.getElementById('p-dl').value)||0, sz=parseFloat(document.getElementById('p-sz').value)||0, rozm=parseFloat(document.getElementById('p-rozm').value)||0.25, cena=parseFloat(document.getElementById('p-cena').value)||0;
-  const el=document.getElementById('res-plytki'); if(!dl||!sz){el.innerHTML='';return;}
-  const pow=dl*sz, szt=Math.ceil(pow/rozm*1.1);
+window.calcPlytki=()=>{
+  const dl=parseFloat(document.getElementById('p-dl').value)||0,sz=parseFloat(document.getElementById('p-sz').value)||0,rozm=parseFloat(document.getElementById('p-rozm').value)||0.25,cena=parseFloat(document.getElementById('p-cena').value)||0;
+  const el=document.getElementById('res-plytki');if(!dl||!sz){el.innerHTML='';return;}
+  const pow=dl*sz,szt=Math.ceil(pow/rozm*1.1);
   el.innerHTML=`<div class="calc-result"><strong>Powierzchnia: ${pow.toFixed(1)} m²</strong>Płytki: <b>${szt.toLocaleString('pl-PL')} szt</b><br>${cena?'Koszt: <b>'+fmt(pow*1.1*cena)+'</b><br>':''}<span class="note">+10% narzut strat wliczony</span></div>`;
 };
 </script>
