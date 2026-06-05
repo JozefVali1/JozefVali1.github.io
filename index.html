@@ -120,6 +120,45 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .empty .ico{font-size:48px;display:block;margin-bottom:10px}
 .loading{text-align:center;padding:40px;color:#bbb;font-size:14px}
 
+/* Wnioski */
+.permit-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #e5e5e0;border-left:4px solid #ccc;cursor:pointer;transition:opacity .1s}
+.permit-card:active{opacity:.8}
+.permit-card.ps-submitted{border-left-color:#2A7DD1}
+.permit-card.ps-approved{border-left-color:#0F6E56}
+.permit-card.ps-rejected{border-left-color:#A32D2D}
+.permit-progress{height:5px;background:#f0f0eb;border-radius:3px;margin:8px 0 4px;overflow:hidden}
+.permit-progress-fill{height:100%;border-radius:3px;transition:width .4s}
+.permit-meta{display:flex;gap:12px;font-size:11px;color:#aaa;flex-wrap:wrap;margin-top:6px}
+.permit-countdown{font-size:12px;font-weight:600;margin-top:4px}
+.permit-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.pstat{background:#fff;border-radius:12px;padding:10px;border:1px solid #e5e5e0;text-align:center}
+.pstat-num{font-size:22px;font-weight:700;color:#1a1a1a}
+.pstat-label{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+
+/* View toggle */
+.view-toggle{display:flex;gap:8px;margin-bottom:14px}
+.vtab{flex:1;padding:9px;border:1.5px solid #e5e5e0;border-radius:10px;font-size:13px;font-weight:600;color:#888;background:#fff;cursor:pointer;text-align:center}
+.vtab.active{border-color:#0F6E56;color:#0F6E56;background:#E1F5EE}
+
+/* Gantt */
+.gantt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid #e5e5e0;background:#fff}
+.gantt-row{display:flex;align-items:stretch;border-bottom:1px solid #f5f5f0}
+.gantt-row:last-child{border-bottom:none}
+.gantt-label-cell{width:120px;min-width:120px;position:sticky;left:0;background:#fff;z-index:5;padding:0 8px 0 12px;display:flex;align-items:center;border-right:1px solid #efefef}
+.gantt-label-cell span{font-size:11px;font-weight:500;color:#1a1a1a;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.gantt-track{position:relative;height:42px;flex-shrink:0}
+.gantt-bar{position:absolute;height:24px;top:9px;border-radius:6px;display:flex;align-items:center;padding:0 6px;font-size:10px;color:rgba(255,255,255,.95);font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.12);cursor:pointer}
+.gantt-today-line{position:absolute;top:0;bottom:0;width:2px;background:rgba(229,57,53,.65);z-index:4;pointer-events:none}
+.gantt-today-tag{position:absolute;top:3px;left:3px;font-size:8px;color:#E53E3E;font-weight:700;white-space:nowrap}
+.gantt-month-line{position:absolute;top:0;bottom:0;border-left:1px dashed #ebebeb;pointer-events:none}
+.gantt-month-text{position:absolute;bottom:7px;left:4px;font-size:9px;color:#bbb;font-weight:600;white-space:nowrap}
+.gantt-header-label{width:120px;min-width:120px;position:sticky;left:0;background:#f8f8f5;z-index:6;padding:7px 8px 7px 12px;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.4px;border-right:1px solid #e5e5e0;display:flex;align-items:flex-end}
+.gantt-header-track{position:relative;height:34px;background:#f8f8f5;border-bottom:2px solid #e5e5e0}
+.gantt-section-label-fixed{width:120px;min-width:120px;position:sticky;left:0;background:#f5f5f0;z-index:5;padding:5px 8px 5px 12px;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.4px;border-right:1px solid #e5e5e0;display:flex;align-items:center}
+.gantt-legend{display:flex;gap:10px;flex-wrap:wrap;padding:10px 12px;border-top:1px solid #f0f0eb;font-size:11px;color:#888}
+.gantt-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.gantt-empty{text-align:center;padding:40px 20px;color:#bbb;font-size:13px;line-height:1.7}
+
 /* Harmonogram */
 .stage-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #e5e5e0;border-left:4px solid #ccc;cursor:pointer;transition:opacity .1s}
 .stage-card:active{opacity:.8}
@@ -161,6 +200,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="tab" onclick="switchTab('equipment')"><span class="ico">🔧</span>Sprzęt</div>
   <div class="tab" onclick="switchTab('calc')"><span class="ico">🔢</span>Kalkulator</div>
   <div class="tab" onclick="switchTab('budget')"><span class="ico">📅</span>Harmonogram</div>
+  <div class="tab" onclick="switchTab('permits')"><span class="ico">📋</span>Wnioski</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -275,6 +315,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- WNIOSKI -->
+<div id="tab-permits" class="section">
+  <div class="permit-stats">
+    <div class="pstat"><div class="pstat-num" id="p-submitted" style="color:#2A7DD1">0</div><div class="pstat-label">Złożone</div></div>
+    <div class="pstat"><div class="pstat-num" id="p-approved" style="color:#0F6E56">0</div><div class="pstat-label">Decyzja</div></div>
+    <div class="pstat"><div class="pstat-num" id="p-overdue" style="color:#A32D2D">0</div><div class="pstat-label">Po terminie</div></div>
+  </div>
+  <div class="section-title">Złożone wnioski i decyzje</div>
+  <div id="permits-list"><div class="loading">Ładowanie…</div></div>
+</div>
+
 <!-- HARMONOGRAM -->
 <div id="tab-budget" class="section">
   <div class="card" style="margin-bottom:14px">
@@ -290,9 +341,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="harm-stat"><div class="harm-stat-num" style="color:#2A7DD1" id="h-inprog">0</div><div class="harm-stat-label">W toku</div></div>
     <div class="harm-stat"><div class="harm-stat-num" style="color:#0F6E56" id="h-done">0</div><div class="harm-stat-label">Zakończone</div></div>
   </div>
-  <div class="section-title">Etapy budowy</div>
-  <div id="stages-list"></div>
-  <button class="btn-add-stage" onclick="openNewStage()">+ Dodaj własny etap</button>
+
+  <div class="view-toggle">
+    <button class="vtab active" id="vtab-list" onclick="switchHarmView(false)">☰ Lista</button>
+    <button class="vtab" id="vtab-gantt" onclick="switchHarmView(true)">📊 Wykres Gantta</button>
+  </div>
+
+  <div id="harm-list-view">
+    <div class="section-title">Etapy budowy</div>
+    <div id="stages-list"></div>
+    <button class="btn-add-stage" onclick="openNewStage()">+ Dodaj własny etap</button>
+  </div>
+
+  <div id="harm-gantt-view" style="display:none">
+    <div class="gantt-empty">Ładowanie wykresu…</div>
+  </div>
 </div>
 
 <!-- FAB -->
@@ -436,6 +499,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- MODAL WNIOSEK -->
+<div class="modal-bg" id="modal-permit" onclick="closeModalBg('modal-permit',event)">
+  <div class="modal">
+    <span class="drag-handle"></span>
+    <h2 id="permit-modal-title">📋 Nowy wniosek</h2>
+    <div class="form-row"><label>Nazwa wniosku *</label>
+      <input type="text" id="fp-name" placeholder="np. Warunki zabudowy (WZ)">
+    </div>
+    <div class="form-row"><label>Typ</label>
+      <select id="fp-type">
+        <option value="wz">Warunki zabudowy (WZ)</option>
+        <option value="woda">Przyłącze wody / wodociąg</option>
+        <option value="energia">Przyłącze energetyczne</option>
+        <option value="pozwolenie">Pozwolenie na budowę</option>
+        <option value="inne">Inne</option>
+      </select>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Data złożenia</label><input type="date" id="fp-submitted"></div>
+      <div class="form-row"><label>Oczekiwany czas (dni)</label><input type="number" inputmode="numeric" id="fp-days" placeholder="np. 30"></div>
+    </div>
+    <div class="form-row"><label>Status</label>
+      <select id="fp-status">
+        <option value="submitted">Złożony — czekam</option>
+        <option value="approved">Decyzja pozytywna</option>
+        <option value="rejected">Odmowa</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Data decyzji (jeśli już jest)</label><input type="date" id="fp-decision"></div>
+    <div class="form-row"><label>Uwagi</label><textarea id="fp-note" placeholder="np. Złożono osobiście, nr sprawy ABC/123…"></textarea></div>
+    <div class="btn-row">
+      <button class="btn-danger" id="permit-del-btn" onclick="deletePermitEdit()" style="display:none">Usuń</button>
+      <button class="btn-cancel" onclick="closeModal('modal-permit')">Anuluj</button>
+      <button class="btn-primary" onclick="savePermit()">✓ Zapisz</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL ETAP HARMONOGRAMU -->
 <div class="modal-bg" id="modal-stage" onclick="closeModalBg('modal-stage',event)">
   <div class="modal">
@@ -483,14 +584,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const matsCol = collection(db, 'materials');
-const consCol = collection(db, 'contractors');
-const eqCol   = collection(db, 'equipment');
-const cfgDoc  = doc(db, 'config', 'main');
+const matsCol    = collection(db, 'materials');
+const consCol    = collection(db, 'contractors');
+const eqCol      = collection(db, 'equipment');
+const permitsCol = collection(db, 'permits');
+const cfgDoc     = doc(db, 'config', 'main');
 
-let mats=[], cons=[], eqs=[], budget=0, stages=[];
+let mats=[], cons=[], eqs=[], permits=[], budget=0, stages=[];
 let matFilter='all', conFilter='all', eqFilter='all';
 let editingStageIdx = -1;
+let editingPermitId = null;
 
 const syncDot = document.getElementById('sync-dot');
 function setSynced(ok){ syncDot.className = 'sync-dot ' + (ok?'ok':'err'); }
@@ -508,6 +611,12 @@ onSnapshot(consCol, snap => {
 onSnapshot(eqCol, snap => {
   eqs = snap.docs.map(d=>({id:d.id,...d.data()}));
   renderEqs(); setSynced(true);
+}, ()=>setSynced(false));
+
+onSnapshot(permitsCol, snap => {
+  permits = snap.docs.map(d=>({id:d.id,...d.data()}));
+  permits.sort((a,b)=>(b.submittedDate||'').localeCompare(a.submittedDate||''));
+  renderPermits(); if(ganttActive) renderGantt(); setSynced(true);
 }, ()=>setSynced(false));
 
 // Default stages from kosztorys Kaila
@@ -768,13 +877,13 @@ window.saveRental=async()=>{
 };
 
 // ===== TABS =====
-const TABS=['dashboard','materials','contractors','equipment','calc','budget'];
+const TABS=['dashboard','materials','contractors','equipment','calc','budget','permits'];
 window.switchTab=t=>{
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(s=>s.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
   document.querySelectorAll('.tab')[TABS.indexOf(t)].classList.add('active');
-  const showFab=['materials','contractors','equipment'].includes(t);
+  const showFab=['materials','contractors','equipment','permits'].includes(t);
   document.getElementById('fab').className='fab'+(showFab?' show':'');
   window._currentTab=t;
   if(t==='budget') renderBudget();
@@ -788,6 +897,7 @@ window.openModal=()=>{
   if(t==='materials') document.getElementById('modal-mat').classList.add('open');
   else if(t==='contractors') document.getElementById('modal-con').classList.add('open');
   else if(t==='equipment') document.getElementById('modal-eq').classList.add('open');
+  else if(t==='permits') openNewPermit();
 };
 window.closeModal=id=>document.getElementById(id).classList.remove('open');
 window.closeModalBg=(id,e)=>{if(e.target===document.getElementById(id))closeModal(id);};
@@ -838,6 +948,7 @@ window.saveBudget=()=>{
 };
 
 function renderBudget(){
+  if(ganttActive) renderGantt();
   if(budget) document.getElementById('budget-input').value=budget;
   document.getElementById('h-planned').textContent=stages.filter(s=>s.status==='planned').length;
   document.getElementById('h-inprog').textContent=stages.filter(s=>s.status==='inprog').length;
@@ -914,6 +1025,287 @@ window.deleteStageEdit=()=>{
   closeModal('modal-stage');
   renderBudget();
 };
+
+// ===== WNIOSKI =====
+const PERMIT_TYPE_LABELS = {wz:'WZ',woda:'Wodociąg',energia:'Energetyka',pozwolenie:'Pozwolenie',inne:'Wniosek'};
+const PERMIT_STATUS_LABELS = {submitted:'Złożony',approved:'Decyzja ✓',rejected:'Odmowa ✗'};
+const PERMIT_STATUS_BADGE = {submitted:'badge-active',approved:'badge-done',rejected:'badge-returned'};
+const PERMIT_DEFAULTS = {wz:300,woda:7,energia:30,pozwolenie:65,inne:30};
+
+function daysDiff(from, to){
+  const a=new Date(from), b=new Date(to||new Date().toISOString().split('T')[0]);
+  return Math.round((b-a)/(1000*60*60*24));
+}
+
+function renderPermits(){
+  const today = new Date().toISOString().split('T')[0];
+  const submitted = permits.filter(p=>p.status==='submitted').length;
+  const approved  = permits.filter(p=>p.status==='approved').length;
+  const overdue   = permits.filter(p=>p.status==='submitted'&&p.submittedDate&&p.expectedDays&&daysDiff(p.submittedDate,today)>p.expectedDays).length;
+
+  document.getElementById('p-submitted').textContent = submitted;
+  document.getElementById('p-approved').textContent  = approved;
+  document.getElementById('p-overdue').textContent   = overdue;
+
+  const el = document.getElementById('permits-list');
+  if(!permits.length){
+    el.innerHTML=`<div class="empty"><span class="ico">📋</span>Naciśnij + żeby dodać wniosek</div>`;
+    return;
+  }
+
+  el.innerHTML = permits.map(p=>{
+    const elapsed = p.submittedDate ? daysDiff(p.submittedDate, today) : 0;
+    const expected = p.expectedDays || PERMIT_DEFAULTS[p.permitType] || 30;
+    const pct = Math.min(Math.round(elapsed/expected*100), 100);
+    const isOverdue = p.status==='submitted' && elapsed > expected;
+    const daysLeft = expected - elapsed;
+
+    // border color
+    const borderCls = p.status==='approved' ? 'ps-approved' : p.status==='rejected' ? 'ps-rejected' : 'ps-submitted';
+
+    // expected decision date
+    let expectedDate = '';
+    if(p.submittedDate && expected){
+      const d = new Date(p.submittedDate);
+      d.setDate(d.getDate()+expected);
+      expectedDate = fmtDate(d.toISOString().split('T')[0]);
+    }
+
+    // countdown text
+    let countdownHtml = '';
+    if(p.status==='submitted'){
+      const color = isOverdue ? '#A32D2D' : elapsed > expected*0.8 ? '#BA7517' : '#0F6E56';
+      const barColor = isOverdue ? '#A32D2D' : elapsed > expected*0.8 ? '#BA7517' : '#2A7DD1';
+      countdownHtml = `
+        <div class="permit-progress"><div class="permit-progress-fill" style="width:${pct}%;background:${barColor}"></div></div>
+        <div class="permit-countdown" style="color:${color}">
+          ${isOverdue ? '⚠️ Przekroczono termin o '+(elapsed-expected)+' dni' : daysLeft+' dni do planowanego terminu'}
+        </div>`;
+    } else if(p.status==='approved'){
+      countdownHtml = `<div class="permit-countdown" style="color:#0F6E56">✅ Decyzja pozytywna${p.decisionDate?' — '+fmtDate(p.decisionDate):''}</div>`;
+    } else if(p.status==='rejected'){
+      countdownHtml = `<div class="permit-countdown" style="color:#A32D2D">❌ Odmowa${p.decisionDate?' — '+fmtDate(p.decisionDate):''}</div>`;
+    }
+
+    return`<div class="permit-card ${borderCls}" onclick="editPermit('${p.id}')">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div style="flex:1">
+          <div class="card-title">${p.name||PERMIT_TYPE_LABELS[p.permitType]||'Wniosek'}</div>
+          <div class="card-sub">${PERMIT_TYPE_LABELS[p.permitType]||''}</div>
+        </div>
+        <span class="badge ${PERMIT_STATUS_BADGE[p.status]||'badge-planned'}">${PERMIT_STATUS_LABELS[p.status]||p.status}</span>
+      </div>
+      ${countdownHtml}
+      <div class="permit-meta">
+        ${p.submittedDate?'<span>📅 Złożono: '+fmtDate(p.submittedDate)+'</span>':''}
+        ${p.submittedDate&&expected?'<span>⏳ Oczekiwany: '+expectedDate+' ('+expected+' dni)</span>':''}
+        ${p.status==='submitted'?'<span>📆 Minęło: '+elapsed+' dni</span>':''}
+      </div>
+      ${p.note?`<div style="font-size:12px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f0">💬 ${p.note}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+window.editPermit = id => {
+  const p = permits.find(x=>x.id===id);
+  if(!p) return;
+  editingPermitId = id;
+  document.getElementById('permit-modal-title').textContent = '📋 '+p.name;
+  document.getElementById('fp-name').value = p.name||'';
+  document.getElementById('fp-type').value = p.permitType||'inne';
+  document.getElementById('fp-submitted').value = p.submittedDate||'';
+  document.getElementById('fp-days').value = p.expectedDays||'';
+  document.getElementById('fp-status').value = p.status||'submitted';
+  document.getElementById('fp-decision').value = p.decisionDate||'';
+  document.getElementById('fp-note').value = p.note||'';
+  document.getElementById('permit-del-btn').style.display = '';
+  document.getElementById('modal-permit').classList.add('open');
+};
+
+window.openNewPermit = () => {
+  editingPermitId = null;
+  document.getElementById('permit-modal-title').textContent = '📋 Nowy wniosek';
+  ['fp-name','fp-submitted','fp-days','fp-decision','fp-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fp-type').value = 'wz';
+  document.getElementById('fp-status').value = 'submitted';
+  document.getElementById('fp-days').value = PERMIT_DEFAULTS['wz'];
+  document.getElementById('permit-del-btn').style.display = 'none';
+  document.getElementById('modal-permit').classList.add('open');
+};
+
+// auto-fill expected days when type changes
+document.getElementById('fp-type').addEventListener('change', function(){
+  const daysEl = document.getElementById('fp-days');
+  if(!daysEl.value) daysEl.value = PERMIT_DEFAULTS[this.value]||30;
+});
+
+window.savePermit = async () => {
+  const name = document.getElementById('fp-name').value.trim();
+  if(!name){ alert('Wpisz nazwę wniosku'); return; }
+  const data = {
+    name,
+    permitType: document.getElementById('fp-type').value,
+    submittedDate: document.getElementById('fp-submitted').value,
+    expectedDays: parseInt(document.getElementById('fp-days').value)||0,
+    status: document.getElementById('fp-status').value,
+    decisionDate: document.getElementById('fp-decision').value,
+    note: document.getElementById('fp-note').value.trim()
+  };
+  if(editingPermitId){
+    await updateDoc(doc(db,'permits',editingPermitId), data);
+  } else {
+    await addDoc(permitsCol, data);
+  }
+  closeModal('modal-permit');
+};
+
+window.deletePermitEdit = async () => {
+  if(!editingPermitId) return;
+  if(!confirm('Usunąć ten wniosek?')) return;
+  await deleteDoc(doc(db,'permits',editingPermitId));
+  closeModal('modal-permit');
+};
+
+// ===== GANTT =====
+const DAY_W = 5;
+const G_STAGE = {planned:'#94A3B8', inprog:'#3B82F6', done:'#10B981'};
+const G_PERMIT = {submitted:'#60A5FA', approved:'#34D399', rejected:'#F87171'};
+const PL_MON = ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
+let ganttActive = false;
+
+window.switchHarmView = isGantt => {
+  ganttActive = isGantt;
+  document.getElementById('vtab-list').classList.toggle('active', !isGantt);
+  document.getElementById('vtab-gantt').classList.toggle('active', isGantt);
+  document.getElementById('harm-list-view').style.display = isGantt ? 'none' : '';
+  document.getElementById('harm-gantt-view').style.display = isGantt ? '' : 'none';
+  if(isGantt) renderGantt();
+};
+
+function ganttRange(){
+  const dates=[];
+  stages.forEach(s=>{
+    if(s.start) dates.push(new Date(s.start));
+    if(s.end)   dates.push(new Date(s.end));
+  });
+  permits.forEach(p=>{
+    if(p.submittedDate) dates.push(new Date(p.submittedDate));
+    if(p.decisionDate)  dates.push(new Date(p.decisionDate));
+    else if(p.submittedDate && p.expectedDays){
+      const d=new Date(p.submittedDate); d.setDate(d.getDate()+p.expectedDays); dates.push(d);
+    }
+  });
+  if(!dates.length) return null;
+  let mn=new Date(Math.min(...dates.map(d=>d.getTime())));
+  let mx=new Date(Math.max(...dates.map(d=>d.getTime())));
+  mn=new Date(mn.getFullYear(), mn.getMonth()-1, 1);
+  mx=new Date(mx.getFullYear(), mx.getMonth()+2, 0);
+  return {mn, mx};
+}
+
+function d2x(ds, mn){ return Math.round((new Date(ds)-mn)/86400000)*DAY_W; }
+
+function renderGantt(){
+  const el=document.getElementById('harm-gantt-view');
+  const range=ganttRange();
+  if(!range){
+    el.innerHTML='<div class="gantt-empty">Ustaw daty w etapach lub wnioskach<br>żeby zobaczyć wykres Gantta.<br><span style="font-size:12px">Kliknij etap → uzupełnij daty</span></div>';
+    return;
+  }
+  const {mn, mx}=range;
+  const totalDays=Math.round((mx-mn)/86400000);
+  const W=totalDays*DAY_W;
+  const todayStr=new Date().toISOString().split('T')[0];
+  const tx=d2x(todayStr,mn);
+
+  // month grid lines + labels (reused in each row)
+  let mGrid='', mHeader='';
+  let cur=new Date(mn.getFullYear(),mn.getMonth(),1);
+  while(cur<=mx){
+    const x=d2x(cur.toISOString().split('T')[0],mn);
+    const lbl=PL_MON[cur.getMonth()]+' '+String(cur.getFullYear()).slice(2);
+    mGrid+=`<div class="gantt-month-line" style="left:${x}px"></div>`;
+    mHeader+=`<div class="gantt-month-line" style="left:${x}px"></div><div class="gantt-month-text" style="left:${x}px">${lbl}</div>`;
+    cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);
+  }
+  const todayOverlay=tx>=0&&tx<=W
+    ?`<div class="gantt-today-line" style="left:${tx}px"><span class="gantt-today-tag">dziś</span></div>`:'';
+
+  function makeTrack(barHtml, bg=''){
+    return `<div class="gantt-track" style="width:${W}px${bg?';background:'+bg:''}">${mGrid}${todayOverlay}${barHtml}</div>`;
+  }
+
+  // Stage rows
+  const stageRows=stages.map((s,i)=>{
+    const color=G_STAGE[s.status]||'#94A3B8';
+    let bar='';
+    if(s.start||s.end){
+      const x1=d2x(s.start||s.end,mn);
+      const x2=d2x(s.end||s.start,mn);
+      const w=Math.max(x2-x1, DAY_W*7);
+      bar=`<div class="gantt-bar" style="left:${x1}px;width:${w}px;background:${color}" onclick="editStage(${i})" title="${s.name}">${s.name}</div>`;
+    } else {
+      bar=`<span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:10px;color:#ddd;font-style:italic">brak dat</span>`;
+    }
+    return `<div class="gantt-row" style="cursor:pointer" onclick="editStage(${i})">
+      <div class="gantt-label-cell"><span>${s.name}</span></div>
+      ${makeTrack(bar)}
+    </div>`;
+  }).join('');
+
+  // Permit rows
+  const permitRows=permits.map(p=>{
+    const color=G_PERMIT[p.status]||'#60A5FA';
+    let bar='';
+    if(p.submittedDate){
+      const x1=d2x(p.submittedDate,mn);
+      let endD=p.decisionDate;
+      if(!endD&&p.expectedDays){
+        const d=new Date(p.submittedDate); d.setDate(d.getDate()+p.expectedDays);
+        endD=d.toISOString().split('T')[0];
+      }
+      const x2=endD?d2x(endD,mn):x1+DAY_W*(p.expectedDays||30);
+      const w=Math.max(x2-x1,DAY_W*5);
+      const stripe=p.status==='submitted'
+        ?';background-image:repeating-linear-gradient(90deg,transparent,transparent 5px,rgba(255,255,255,.25) 5px,rgba(255,255,255,.25) 10px)':'';
+      bar=`<div class="gantt-bar" style="left:${x1}px;width:${w}px;background:${color}${stripe}" title="${p.name}">${p.name}</div>`;
+    } else {
+      bar=`<span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:10px;color:#ddd;font-style:italic">brak daty złożenia</span>`;
+    }
+    return `<div class="gantt-row">
+      <div class="gantt-label-cell" style="background:#fafaf8"><span style="color:#6B7280">${p.name}</span></div>
+      ${makeTrack(bar,'#fafaf8')}
+    </div>`;
+  }).join('');
+
+  el.innerHTML=`<div class="gantt-wrap">
+    <div style="min-width:${W+120}px">
+      <div style="display:flex;border-bottom:2px solid #e5e5e0">
+        <div class="gantt-header-label">Etap / Wniosek</div>
+        <div class="gantt-header-track" style="width:${W}px">${mHeader}</div>
+      </div>
+      <div style="display:flex;background:#f5f5f0;border-bottom:1px solid #e5e5e0">
+        <div class="gantt-section-label-fixed">🏗️ Etapy</div>
+        <div style="flex:1;height:28px;background:#f5f5f0"></div>
+      </div>
+      ${stageRows}
+      ${permits.length?`
+      <div style="display:flex;background:#f5f5f0;border-top:2px solid #e5e5e0;border-bottom:1px solid #e5e5e0">
+        <div class="gantt-section-label-fixed">📋 Wnioski</div>
+        <div style="flex:1;height:28px;background:#f5f5f0"></div>
+      </div>
+      ${permitRows}`:''}
+      <div class="gantt-legend">
+        <span style="display:flex;align-items:center;gap:5px"><span class="gantt-legend-dot" style="background:#94A3B8"></span>Planowany</span>
+        <span style="display:flex;align-items:center;gap:5px"><span class="gantt-legend-dot" style="background:#3B82F6"></span>W toku</span>
+        <span style="display:flex;align-items:center;gap:5px"><span class="gantt-legend-dot" style="background:#10B981"></span>Zakończony</span>
+        <span style="display:flex;align-items:center;gap:5px"><span class="gantt-legend-dot" style="background:#E53E3E"></span>Dziś</span>
+        ${permits.length?`<span style="display:flex;align-items:center;gap:5px"><span class="gantt-legend-dot" style="background:#60A5FA"></span>Wniosek złożony</span>
+        <span style="display:flex;align-items:center;gap:5px"><span class="gantt-legend-dot" style="background:#34D399"></span>Decyzja ✓</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
 
 // ===== CALCULATORS =====
 window.setCalc=(t,btn)=>{
